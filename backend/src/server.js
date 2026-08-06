@@ -92,25 +92,58 @@ app.use('/api/admin', require('./routes/admin.routes'));
 app.use(notFound);
 app.use(errorHandler);
 
+// ---- Initialize admin account on startup ----
+async function initAdmin() {
+  try {
+    const bcrypt = require('bcryptjs');
+    const prisma = require('./lib/prisma');
+    
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@peoriginals.com').toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'ChangeMe_12345';
+    const adminName = process.env.ADMIN_NAME || 'Store Admin';
+    
+    const existing = await prisma.admin.findUnique({ where: { email: adminEmail } });
+    if (!existing) {
+      await prisma.admin.create({
+        data: {
+          email: adminEmail,
+          passwordHash: await bcrypt.hash(adminPassword, 12),
+          name: adminName,
+          role: 'SUPER_ADMIN',
+        },
+      });
+      console.log(`✅ Admin account created: ${adminEmail}`);
+    }
+  } catch (err) {
+    console.error('⚠️  Could not initialize admin:', err.message);
+    // Don't crash — admin may already exist or DB may be initializing
+  }
+}
+
 // ---- Start ----
 if (require.main === module) {
   const HOST = process.env.HOST || '0.0.0.0'; // Railway needs 0.0.0.0
-  const server = app.listen(config.port, HOST, () => {
-    console.log(`\n🌸 PE_ORIGINALS API running:`);
-    console.log(`   http://localhost:${config.port}/api/health`);
-    console.log(`   Frontend: http://localhost:${config.port}/`);
-    console.log(`   Admin:    http://localhost:${config.port}/admin/\n`);
-  });
-  server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-      console.error(`[server] Port ${config.port} is already in use — Railway may have injected PORT. Retrying on PORT+1…`);
-      const alt = app.listen(0, HOST, () => {
-        console.log(`\n🌸 PE_ORIGINALS API running on ephemeral port ${alt.address().port}`);
-      });
-    } else {
-      throw err;
-    }
+  
+  // Initialize admin, then start server
+  initAdmin().then(() => {
+    const server = app.listen(config.port, HOST, () => {
+      console.log(`\n🌸 PE_ORIGINALS API running:`);
+      console.log(`   http://localhost:${config.port}/api/health`);
+      console.log(`   Frontend: http://localhost:${config.port}/`);
+      console.log(`   Admin:    http://localhost:${config.port}/admin/\n`);
+    });
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`[server] Port ${config.port} is already in use — Railway may have injected PORT. Retrying on PORT+1…`);
+        const alt = app.listen(0, HOST, () => {
+          console.log(`\n🌸 PE_ORIGINALS API running on ephemeral port ${alt.address().port}`);
+        });
+      } else {
+        throw err;
+      }
+    });
   });
 }
 
 module.exports = app;
+
