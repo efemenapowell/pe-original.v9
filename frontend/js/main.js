@@ -17,6 +17,42 @@ function money(n) {
   return "₦" + Number(n).toLocaleString("en-NG");
 }
 
+/* ── Scroll lock (mobile menu + cart drawer) ──────────────
+   Plain `body.style.overflow = "hidden"` does NOT stop touch-drag
+   scrolling on iOS Safari — the page can still be dragged sideways/
+   up-down while "locked," which is what caused the reported mobile
+   bug (page shifting to the side, then feeling frozen once the
+   layout and native scroll position disagree). Locking via
+   position:fixed on the body is the standard reliable fix, with a
+   counter so the menu and cart drawer can't unlock each other if
+   both happen to be open at once. ────────────────────────────── */
+const ScrollLock = {
+  count: 0,
+  scrollY: 0,
+  lock() {
+    if (this.count === 0) {
+      this.scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = -this.scrollY + "px";
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+    }
+    this.count++;
+  },
+  unlock() {
+    this.count = Math.max(0, this.count - 1);
+    if (this.count === 0) {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, this.scrollY);
+    }
+  },
+};
+
 /* ── Nav search icon (pages other than shop.html) ─────────
    Prompts for a quick search term and takes the shopper straight
    to the shop page with that search already applied via ?search=.
@@ -51,7 +87,7 @@ window.peoNavSearch = function peoNavSearch() {
     menu.classList.add("open");
     if (overlay) overlay.classList.add("active");
     toggle.classList.add("open");
-    document.body.style.overflow = "hidden";
+    ScrollLock.lock();
     // stagger menu links
     $$(".m-link", menu).forEach((a, i) => {
       a.style.transitionDelay = 0.08 + i * 0.06 + "s";
@@ -61,7 +97,7 @@ window.peoNavSearch = function peoNavSearch() {
     menu.classList.remove("open");
     if (overlay) overlay.classList.remove("active");
     toggle.classList.remove("open");
-    document.body.style.overflow = "";
+    ScrollLock.unlock();
     $$(".m-link", menu).forEach((a) => {
       a.style.transitionDelay = "0s";
     });
@@ -208,14 +244,14 @@ const Cart = {
     this.renderDrawer();
     drawer.classList.add("open");
     if (overlay) overlay.classList.add("active");
-    document.body.style.overflow = "hidden";
+    ScrollLock.lock();
   },
   closeDrawer() {
     const drawer = $("#cartDrawer");
     const overlay = $("#cartOverlay");
     if (drawer) drawer.classList.remove("open");
     if (overlay) overlay.classList.remove("active");
-    document.body.style.overflow = "";
+    ScrollLock.unlock();
   },
   showToast(msg) {
     let toast = $("#cartToast");

@@ -67,6 +67,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  overscroll-behavior-x: none;
 }
 body {
   margin: 0;
@@ -77,6 +78,8 @@ body {
   background: var(--white);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
+  width: 100%;
 }
 h1,
 h2,
@@ -494,7 +497,7 @@ select {
 .mobile-menu {
   position: fixed;
   top: 0;
-  right: -100%;
+  right: -420px;
   width: min(84vw, 380px);
   height: 100dvh;
   background: var(--white);
