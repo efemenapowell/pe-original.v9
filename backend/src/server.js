@@ -13,6 +13,15 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+// ---- Trust Railway's reverse proxy ----
+// Railway (like most PaaS) sits in front of the app and adds an
+// X-Forwarded-For header. Without telling Express to trust it,
+// express-rate-limit refuses to run (ERR_ERL_UNEXPECTED_X_FORWARDED_FOR)
+// since trusting that header blindly could let clients spoof their IP
+// and dodge rate limits. `1` here means "trust exactly one hop" —
+// Railway's own edge proxy — which is correct for this setup.
+app.set('trust proxy', 1);
+
 // ---- Security & parsing middleware ----
 app.disable('x-powered-by');
 app.use(
