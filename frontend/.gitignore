@@ -1,0 +1,17 @@
+# ============================================================
+# PE_ORIGINALS — frontend/.gitignore
+# Frontend-specific ignores (on top of the root .gitignore).
+# ============================================================
+
+# ---- Dependencies (if frontend is ever built with a bundler) ----
+node_modules/
+dist/
+build/
+
+# ---- Runtime uploads ----
+uploads/*
+!uploads/.gitkeep
+
+# ---- Misc ----
+*.log
+.DS_Store

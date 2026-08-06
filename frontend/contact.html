@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact — PE_ORIGINALS</title>
+    <meta
+      name="description"
+      content="Get in touch with PE_ORIGINALS — questions about a piece, sizing help, styling advice, or just saying hello."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+  <body>
+    <div class="announce-bar">
+      ✨ New arrivals every week · Free shipping over <span id="announceShipAmt">₦550,000</span> ✨
+    </div>
+
+    <!-- ══ NAV ══════════════════════════════════════════════ -->
+    <header class="nav" id="nav">
+      <div class="nav-inner">
+        <!-- ═══ LOGO PLACEHOLDER ══════════════════════════════
+           Replace images/logo.png with your real logo file
+           ═════════════════════════════════════════════════ -->
+        <a href="index.html" class="brand">
+          <img
+            src="images/logo.png"
+            alt="PE_ORIGINALS logo"
+            class="brand-logo"
+            onerror="this.style.display = 'none'"
+          />
+          <span class="brand-text">PE_<em>ORIGINALS</em></span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="index.html">Home</a>
+          <a href="shop.html">Shop</a>
+          <a href="about.html">About</a>
+          <a href="contact.html" class="active">Contact</a>
+        </nav>
+        <div class="nav-icons">
+          <button
+            class="icon-btn"
+            aria-label="My account — sign in"
+            data-open-auth
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
+            </svg>
+          </button>
+          <button
+            class="icon-btn"
+            aria-label="Search"
+            onclick="peoNavSearch()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </button>
+          <button
+            class="icon-btn"
+            aria-label="Open shopping bag"
+            data-open-cart
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M6 7h12l1.5 13.5h-15L6 7z" />
+              <path d="M9 10V6a3 3 0 016 0v4" />
+            </svg>
+            <span class="cart-count">0</span>
+          </button>
+          <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile menu -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <aside class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="m-link">Home <span class="m-num">01</span></a>
+      <a href="shop.html" class="m-link">Shop <span class="m-num">02</span></a>
+      <a href="about.html" class="m-link"
+        >About <span class="m-num">03</span></a
+      >
+      <a href="contact.html" class="m-link"
+        >Contact <span class="m-num">04</span></a
+      >
+      <div class="m-social">
+        <a href="#" class="icon-btn" aria-label="Instagram"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle
+              cx="17.2"
+              cy="6.8"
+              r="1"
+              fill="currentColor"
+              stroke="none"
+            /></svg
+        ></a>
+        <a href="#" class="icon-btn" aria-label="TikTok"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              d="M9 12a4.5 4.5 0 100 9 4.5 4.5 0 004.5-4.5V3c1.5 1 3 1.5 5 1.5"
+            /></svg
+        ></a>
+        <a href="#" class="icon-btn" aria-label="Pinterest"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path
+              d="M12 7.5c-2 0-3.5 1.4-3.5 3.4 0 1 .4 1.9 1.1 2.3l.6-2c-.1-.4-.3-.7-.3-1.2 0-1 .8-1.9 2-1.9 1.1 0 1.8.8 1.8 1.8 0 1.3-.6 2.6-1.4 2.6-.4 0-.7-.4-.6-.8l.5-2.1c-.2-.5-.8-.7-1.2-.4"
+            /></svg
+        ></a>
+      </div>
+    </aside>
+
+    <!-- ══ PAGE HERO ════════════════════════════════════════ -->
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">Get in touch</p>
+        <span class="script-accent script-lg">say hello</span>
+        <h1>We'd Love to <em>Hear From You</em></h1>
+        <p class="page-hero-sub">
+          A question about a piece, sizing advice, or a treasure you'd like to
+          style advice — we reply within 24 hours.
+        </p>
+      </div>
+    </section>
+
+    <!-- ══ CONTACT MAIN ═════════════════════════════════════ -->
+    <section class="contact-main section">
+      <div class="container contact-grid">
+        <!-- Info column -->
+        <div class="contact-info reveal">
+          <p class="eyebrow">Contact details</p>
+          <span class="script-accent">reach us anytime</span>
+          <h2 style="margin-bottom: 24px">Let's Talk Style</h2>
+          <div class="ci-item">
+            <div class="ci-ic">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              >
+                <path d="M4 6h16v12H4z" />
+                <path d="M4 7l8 6 8-6" />
+              </svg>
+            </div>
+            <div>
+              <h4>Email</h4>
+              <a href="mailto:Onomeprecious@icloud.com"
+                >Onomeprecious@icloud.com</a
+              >
+            </div>
+          </div>
+          <div class="ci-item">
+            <div class="ci-ic">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              >
+                <path d="M12 21s-7-5.5-7-11a7 7 0 0114 0c0 5.5-7 11-7 11z" />
+                <circle cx="12" cy="10" r="2.5" />
+              </svg>
+            </div>
+            <div>
+              <h4>Location</h4>
+              <p>Lagos, Nigeria · Worldwide shipping</p>
+            </div>
+          </div>
+
+          <div class="ci-item">
+            <div class="ci-ic">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              >
+                <path
+                  d="M5 4h4l2 2.5 1.5a12 12 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h4>Phone / WhatsApp</h4>
+              <a href="tel:+2347025366051">+234 702 536 6051</a>
+            </div>
+          </div>
+
+          <div class="ci-item">
+            <div class="ci-ic">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 3" />
+              </svg>
+            </div>
+            <div>
+              <h4>Hours</h4>
+              <p>Mon – Sun · 9am – 6pm (WAT)</p>
+            </div>
+          </div>
+          <div class="ci-social">
+            <a href="#" class="icon-btn" aria-label="Instagram"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle
+                  cx="17.2"
+                  cy="6.8"
+                  r="1"
+                  fill="currentColor"
+                  stroke="none"
+                /></svg
+            ></a>
+            <a href="#" class="icon-btn" aria-label="TikTok"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M9 12a4.5 4.5 0 100 9 4.5 4.5 0 004.5-4.5V3c1.5 1 3 1.5 5 1.5"
+                /></svg
+            ></a>
+            <a href="#" class="icon-btn" aria-label="Pinterest"
+              ><svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <circle cx="12" cy="12" r="9" />
+                <path
+                  d="M12 7.5c-2 0-3.5 1.4-3.5 3.4 0 1 .4 1.9 1.1 2.3l.6-2c-.1-.4-.3-.7-.3-1.2 0-1 .8-1.9 2-1.9 1.1 0 1.8.8 1.8 1.8 0 1.3-.6 2.6-1.4 2.6-.4 0-.7-.4-.6-.8l.5-2.1c-.2-.5-.8-.7-1.2-.4"
+                /></svg
+            ></a>
+          </div>
+        </div>
+
+        <!-- Form column -->
+        <div class="contact-form-wrap reveal" data-delay="120">
+          <form class="contact-form" id="contactForm">
+            <p class="eyebrow">Send a message</p>
+            <span class="script-accent">we reply fast 💌</span>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="cfName">Name</label>
+                <input
+                  type="text"
+                  id="cfName"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+              <div class="form-field">
+                <label for="cfEmail">Email</label>
+                <input
+                  type="email"
+                  id="cfEmail"
+                  placeholder="you@email.com"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="cfTopic">Topic</label>
+              <select id="cfTopic">
+                <option>General question</option>
+                <option>Order help</option>
+                <option>Sizing advice</option>
+                <option>Styling help</option>
+                <option>Partnership</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="cfMsg">Message</label>
+              <textarea
+                id="cfMsg"
+                rows="5"
+                placeholder="Tell us everything…"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-block">Send Message</button>
+            <p class="form-note" id="formNote" style="display: none">
+              ✅ Thanks! Your message has been sent — we'll reply within 24
+              hours.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FAQ ══════════════════════════════════════════════ -->
+    <section class="faq-full section-alt" id="faq">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">FAQ</p>
+          <span class="script-accent">good to know</span>
+          <h2>Frequently Asked Questions</h2>
+        </div>
+        <div class="faq-list reveal" id="contactFaq">
+          <div class="faq-item">
+            <button class="faq-q">
+              How do you guarantee authenticity? <span class="faq-chev">⌄</span>
+            </button>
+            <div class="faq-a">
+              <p>
+                Every designer & highstreet piece is examined by our in-house
+                authentication team — checking materials, stitching, hardware,
+                labels and serial codes. If there's any doubt, we don't list it.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              How fast is shipping? <span class="faq-chev">⌄</span>
+            </button>
+            <div class="faq-a">
+              <p>
+                Orders ship within 1–2 business days. Delivery: 2–4 days in
+                Nigeria, 5–10 days worldwide. Tracking is emailed the moment
+                your order leaves us.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Can I return an item? <span class="faq-chev">⌄</span>
+            </button>
+            <div class="faq-a">
+              <p>
+                Yes — 2 days, no fuss. Items must be unworn with tags attached.
+                Refunds are processed within 36 hours of receipt.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Can you help me style an outfit? <span class="faq-chev">⌄</span>
+            </button>
+            <div class="faq-a">
+              <p>
+                Send a note via the contact form (topic: "Styling help") or
+                message us on Instagram. We review within 48 hours and offer a
+                fair price — or a stylish store credit with a bonus.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              Do you ship internationally? <span class="faq-chev">⌄</span>
+            </button>
+            <div class="faq-a">
+              <p>
+                We do! We ship worldwide with tracked, carbon-neutral delivery.
+                Duties and taxes are calculated at checkout where applicable.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q">
+              How do sizes run? <span class="faq-chev">⌄</span>
+            </button>
+            <div class="faq-a">
+              <p>
+                Every listing includes measurements (bust, waist, length)
+                alongside the tag size, so you can compare with pieces you
+                already own. Need help? Message us anytime.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ MAP PLACEHOLDER ══════════════════════════════════ -->
+    <section class="map-section">
+      <div class="container">
+        <div class="map-frame reveal">
+          <!-- ═══ MAP PLACEHOLDER ══════════════════════════════
+             Replace with a Google Maps embed iframe for your
+             real location, e.g.:
+             <iframe src="https://www.google.com/maps/embed?pb=..." ...></iframe>
+             ═════════════════════════════════════════════════ -->
+          <div class="map-fallback">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.4"
+            >
+              <path d="M12 21s-7-5.5-7-11a7 7 0 0114 0c0 5.5-7 11-7 11z" />
+              <circle cx="12" cy="10" r="2.5" />
+            </svg>
+            <h3>Visit Our Boutique</h3>
+            <p>online for now, Lagos, Nigeria</p>
+            <p>Mon – Sun · 9am – 6pm (WAT)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ FOOTER ═══════════════════════════════════════════ -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a href="index.html" class="brand">
+              <img
+                src="images/logo.png"
+                alt="PE_ORIGINALS logo"
+                class="brand-logo"
+                onerror="this.style.display = 'none'"
+              />
+              <span class="brand-text">PE_<em>ORIGINALS</em></span>
+            </a>
+            <p>
+              Curated women's fashion. Authentic designer & highstreet, fresh,
+              stunning, and ready to wear — for all sizes.
+            </p>
+            <div class="footer-social">
+              <a href="#" aria-label="Instagram"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle
+                    cx="17.2"
+                    cy="6.8"
+                    r="1"
+                    fill="currentColor"
+                    stroke="none"
+                  /></svg
+              ></a>
+              <a href="#" aria-label="TikTok"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="M9 12a4.5 4.5 0 100 9 4.5 4.5 0 004.5-4.5V3c1.5 1 3 1.5 5 1.5"
+                  /></svg
+              ></a>
+              <a href="#" aria-label="Pinterest"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path
+                    d="M12 7.5c-2 0-3.5 1.4-3.5 3.4 0 1 .4 1.9 1.1 2.3l.6-2c-.1-.4-.3-.7-.3-1.2 0-1 .8-1.9 2-1.9 1.1 0 1.8.8 1.8 1.8 0 1.3-.6 2.6-1.4 2.6-.4 0-.7-.4-.6-.8l.5-2.1c-.2-.5-.8-.7-1.2-.4"
+                  /></svg
+              ></a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>Shop</h4>
+            <a href="shop.html">All Pieces</a>
+            <a href="shop.html?cat=dresses">Dresses</a>
+            <a href="shop.html?cat=tops">Tops &amp; Blouses</a>
+            <a href="shop.html?cat=outerwear">Outerwear</a>
+            <a href="shop.html?cat=accessories">Accessories</a>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <a href="about.html">Our Story</a>
+            <a href="about.html#sustainability">Sustainability</a>
+            <a href="contact.html">Contact</a>
+            <a href="contact.html#faq">FAQ</a>
+          </div>
+          <div class="footer-col">
+            <h4>Stay in the loop</h4>
+            <p style="font-size: 13px; color: var(--ink-500)">
+              The prettiest finds, straight to your inbox.
+            </p>
+            <form
+              class="newsletter-form"
+              id="footerNewsForm"
+              style="margin-top: 14px"
+            >
+              <input
+                type="email"
+                placeholder="your@email.com"
+                required
+                aria-label="Email address"
+              />
+              <button type="submit" class="btn btn-sm" style="flex: none">
+                Join
+              </button>
+            </form>
+            <div class="footer-pay">
+              <span class="pay-badge">VISA</span>
+              <span class="pay-badge">Mastercard</span>
+              <span class="pay-badge">PayPal</span>
+              <span class="pay-badge">Apple Pay</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span
+            >© <span id="year">2026</span> PE_ORIGINALS. All rights reserved.
+            Made with 💗</span
+          >
+          <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms &amp; Conditions</a>
+            <a href="#">Shipping &amp; Returns</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ══ CART DRAWER ══════════════════════════════════════ -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping bag">
+      <div class="cart-header">
+        <h3>Your Bag <span id="cartCountLabel">0 items</span></h3>
+        <button class="cart-close" data-close-cart aria-label="Close cart">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-empty" id="cartEmpty">
+        <div class="cart-empty-ic">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+          >
+            <path d="M6 7h12l1.5 13.5h-15L6 7z" />
+            <path d="M9 10V6a3 3 0 016 0v4" />
+          </svg>
+        </div>
+        <h4>Your bag is empty</h4>
+        <p>Fill it with something beautiful 💗</p>
+        <button class="btn btn-sm" data-close-cart>Continue Shopping</button>
+      </div>
+      <div class="cart-footer" id="cartFooter">
+        <div class="cart-free-ship" id="shipNote"></div>
+        <div class="cart-free-ship" style="margin-bottom: 16px">
+          <span class="ship-bar"><span id="shipBar"></span></span>
+        </div>
+        <div class="cart-total-row">
+          <span>Subtotal</span><span id="cartSubtotal">₦0</span>
+        </div>
+        <div class="cart-total-row total">
+          <span>Total</span><span class="amount" id="cartTotal">₦0</span>
+        </div>
+        <p class="cart-ship-note">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M3 17h18M5 17V9a4 4 0 014-4h6a4 4 0 014 4v8" />
+            <circle cx="8" cy="20" r="2" />
+            <circle cx="16" cy="20" r="2" /></svg
+          >Shipping calculated at checkout
+        </p>
+        <button class="btn btn-block" data-checkout>Checkout</button>
+      </div>
+    </aside>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/api-bootstrap.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/store-config.js"></script>
+    <script src="js/paystack-inline.js"></script>
+  <script src="js/checkout.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

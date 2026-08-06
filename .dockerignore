@@ -1,0 +1,14 @@
+node_modules
+backend/node_modules
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/uploads/*
+!backend/uploads/.gitkeep
+.git
+*.log
+pe-originals-fullstack.zip
+pe-originals-fullstack-v*.zip
+screenshots
+frontend/dist
+admin/dist

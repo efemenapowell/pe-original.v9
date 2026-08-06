@@ -1,0 +1,13 @@
+# ============================================================
+# PE_ORIGINALS — admin/.gitignore
+# Admin-panel-specific ignores (on top of the root .gitignore).
+# ============================================================
+
+# ---- Dependencies (if admin is ever built with a bundler) ----
+node_modules/
+dist/
+build/
+
+# ---- Misc ----
+*.log
+.DS_Store

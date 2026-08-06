@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — PE_ORIGINALS</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <!-- Admin shell -->
+  <div class="admin-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <span class="mark">PE</span>
+        <div>
+          <div class="name">PE_ORIGINALS</div>
+          <div class="sub">Admin</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <button data-view="dashboard" class="active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          Dashboard
+        </button>
+        <button data-view="products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+          Products
+        </button>
+        <button data-view="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2l-2 4v16h16V6l-2-4H6z"/><path d="M8 10h8"/><path d="M8 14h8"/><path d="M8 18h5"/></svg>
+          Orders
+        </button>
+        <button data-view="categories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 7l-10-5L2 7v10l10 5 10-5V7z"/><path d="M2 7l10 5 10-5"/><path d="M12 12v10"/></svg>
+          Categories
+        </button>
+        <button data-view="content">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>
+          Site Content
+        </button>
+        <button data-view="shipping">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17h18M5 17V9a4 4 0 014-4h6a4 4 0 014 4v8"/><circle cx="8" cy="20" r="2"/><circle cx="16" cy="20" r="2"/></svg>
+          Shipping
+        </button>
+        <button data-view="coupons">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 000 6v3a2 2 0 002 2h16a2 2 0 002-2v-3a3 3 0 000-6V6a2 2 0 00-2-2H4a2 2 0 00-2 2v3z"/><path d="M13 8l-2 8"/><path d="M9.5 10.5h.01"/><path d="M14.5 13.5h.01"/></svg>
+          Coupons
+        </button>
+        <button data-view="users">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5c2.8.4 4.5 2.4 4.5 5"/></svg>
+          Customers
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="admin-email" id="adminEmail">…</div>
+        <button class="btn btn-sm" id="logoutBtn">Sign out</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main" id="mainContent">
+      <div class="main-head">
+        <div>
+          <h1 id="viewTitle">Dashboard</h1>
+          <p class="desc" id="viewDesc"></p>
+        </div>
+        <div class="head-actions" id="viewActions"></div>
+      </div>
+      <div id="viewBody"></div>
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalBox"></div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/admin-api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

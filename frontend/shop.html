@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop — PE_ORIGINALS | Designer Fashion</title>
+    <meta
+      name="description"
+      content="Browse the full PE_ORIGINALS collection — authentic dresses, tops, outerwear, shoes and accessories for women. Filter by category, size, brand and price."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/animations.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+  <body>
+    <div class="announce-bar">
+      ✨ New arrivals every week · Free shipping over <span id="announceShipAmt">₦550,000</span> ✨
+    </div>
+
+    <!-- ══ NAV ══════════════════════════════════════════════ -->
+    <header class="nav" id="nav">
+      <div class="nav-inner">
+        <!-- ═══ LOGO PLACEHOLDER ══════════════════════════════
+           Replace images/logo.png with your real logo file
+           ═════════════════════════════════════════════════ -->
+        <a href="index.html" class="brand">
+          <img
+            src="images/logo.png"
+            alt="PE_ORIGINALS logo"
+            class="brand-logo"
+            onerror="this.style.display = 'none'"
+          />
+          <span class="brand-text">PE_<em>ORIGINALS</em></span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="index.html">Home</a>
+          <a href="shop.html" class="active">Shop</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+        <div class="nav-icons">
+          <button
+            class="icon-btn"
+            aria-label="My account — sign in"
+            data-open-auth
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5" />
+            </svg>
+          </button>
+          <button
+            class="icon-btn"
+            aria-label="Search"
+            onclick="document.getElementById('shopSearch') ? document.getElementById('shopSearch').focus() : null"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+          </button>
+          <button
+            class="icon-btn"
+            aria-label="Open shopping bag"
+            data-open-cart
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M6 7h12l1.5 13.5h-15L6 7z" />
+              <path d="M9 10V6a3 3 0 016 0v4" />
+            </svg>
+            <span class="cart-count">0</span>
+          </button>
+          <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile menu -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <aside class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="m-link">Home <span class="m-num">01</span></a>
+      <a href="shop.html" class="m-link">Shop <span class="m-num">02</span></a>
+      <a href="about.html" class="m-link"
+        >About <span class="m-num">03</span></a
+      >
+      <a href="contact.html" class="m-link"
+        >Contact <span class="m-num">04</span></a
+      >
+      <div class="m-social">
+        <a href="#" class="icon-btn" aria-label="Instagram"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle
+              cx="17.2"
+              cy="6.8"
+              r="1"
+              fill="currentColor"
+              stroke="none"
+            /></svg
+        ></a>
+        <a href="#" class="icon-btn" aria-label="TikTok"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path
+              d="M9 12a4.5 4.5 0 100 9 4.5 4.5 0 004.5-4.5V3c1.5 1 3 1.5 5 1.5"
+            /></svg
+        ></a>
+        <a href="#" class="icon-btn" aria-label="Pinterest"
+          ><svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path
+              d="M12 7.5c-2 0-3.5 1.4-3.5 3.4 0 1 .4 1.9 1.1 2.3l.6-2c-.1-.4-.3-.7-.3-1.2 0-1 .8-1.9 2-1.9 1.1 0 1.8.8 1.8 1.8 0 1.3-.6 2.6-1.4 2.6-.4 0-.7-.4-.6-.8l.5-2.1c-.2-.5-.8-.7-1.2-.4"
+            /></svg
+        ></a>
+      </div>
+    </aside>
+
+    <!-- ══ PAGE HERO ════════════════════════════════════════ -->
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow">The Collection</p>
+        <span class="script-accent">every piece has a story</span>
+        <h1>Shop All</h1>
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="index.html">Home</a><span class="sep">/</span
+          ><span>Shop</span>
+        </nav>
+      </div>
+    </section>
+
+    <!-- ══ SHOP LAYOUT ══════════════════════════════════════ -->
+    <section class="container shop-layout">
+      <!-- Filters (desktop sidebar / mobile drawer) -->
+      <div class="filters-panel" id="filtersPanel">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+          "
+        >
+          <h3 style="font-size: 22px; margin: 0">Filters</h3>
+          <button
+            id="filtersClose"
+            style="
+              display: none;
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              background: var(--blush-100);
+              color: var(--blush-700);
+              font-size: 18px;
+            "
+            aria-label="Close filters"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Category -->
+        <div class="filter-group" data-group="cats">
+          <h4>Category <span class="f-toggle">▾</span></h4>
+          <div class="filter-options" id="catOptions">
+            <label class="filter-option"
+              ><input type="checkbox" value="dresses" /><span>Dresses</span
+              ><span class="count">0</span></label
+            >
+            <label class="filter-option"
+              ><input type="checkbox" value="tops" /><span
+                >Tops &amp; Blouses</span
+              ><span class="count">0</span></label
+            >
+            <label class="filter-option"
+              ><input type="checkbox" value="bottoms" /><span>Bottoms</span
+              ><span class="count">0</span></label
+            >
+            <label class="filter-option"
+              ><input type="checkbox" value="outerwear" /><span>Outerwear</span
+              ><span class="count">0</span></label
+            >
+            <label class="filter-option"
+              ><input type="checkbox" value="shoes" /><span>Shoes</span
+              ><span class="count">0</span></label
+            >
+            <label class="filter-option"
+              ><input type="checkbox" value="accessories" /><span
+                >Accessories</span
+              ><span class="count">0</span></label
+            >
+          </div>
+        </div>
+
+        <!-- Size -->
+        <div class="filter-group" data-group="sizes">
+          <h4>Size <span class="f-toggle">▾</span></h4>
+          <div class="filter-options" id="sizeOptions"></div>
+        </div>
+
+        <!-- Brand -->
+        <div class="filter-group" data-group="brands">
+          <h4>Brand <span class="f-toggle">▾</span></h4>
+          <div class="filter-options" id="brandOptions"></div>
+        </div>
+
+        <!-- Price -->
+        <div class="filter-group">
+          <h4>Max Price <span class="f-toggle">▾</span></h4>
+          <div class="filter-options">
+            <div class="price-range">
+              <input
+                type="range"
+                id="priceRange"
+                min="2000"
+                max="300000"
+                value="300000"
+                aria-label="Maximum price"
+              />
+              <div class="price-labels">
+                <span>₦2,000</span><span id="priceLabel">₦300,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="filter-clear" id="clearFilters">
+          Clear All Filters
+        </button>
+      </div>
+
+      <!-- Results -->
+      <div class="shop-main">
+        <div class="shop-toolbar">
+          <p class="shop-results">
+            Showing <strong id="resultCount">0</strong> beautiful pieces
+          </p>
+          <div class="shop-toolbar-right">
+            <input
+              type="search"
+              id="shopSearch"
+              placeholder="Search pieces…"
+              aria-label="Search products"
+              style="
+                background: var(--cream);
+                border: 1.5px solid var(--blush-100);
+                border-radius: 99px;
+                padding: 10px 18px;
+                font-size: 13px;
+                color: var(--ink-900);
+                width: 170px;
+              "
+            />
+            <select
+              id="sortSelect"
+              class="sort-select"
+              aria-label="Sort products"
+            >
+              <option value="featured">Sort: Featured</option>
+              <option value="price-low">Price: Low → High</option>
+              <option value="price-high">Price: High → Low</option>
+              <option value="rating">Top Rated</option>
+              <option value="newest">Newest</option>
+            </select>
+            <button class="mobile-filter-btn" id="mobileFilterBtn">
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M4 6h16M7 12h10M10 18h4" />
+              </svg>
+              Filters
+            </button>
+          </div>
+        </div>
+
+        <div class="product-grid stagger" id="shopGrid">
+          <!-- Products injected by js/main.js -->
+        </div>
+
+        <div class="no-results" id="noResults">
+          <h3>No pieces match those filters 💭</h3>
+          <p>
+            Try loosening the filters, or check back soon — new treasures arrive
+            weekly.
+          </p>
+          <button
+            class="btn btn-sm"
+            onclick="document.getElementById('clearFilters').click()"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile filter overlay -->
+    <div class="menu-overlay" id="filtersOverlay" style="z-index: 450"></div>
+
+    <!-- ══ CTA BAND ═════════════════════════════════════════ -->
+    <section class="section-sm">
+      <div class="container">
+        <div class="cta-band reveal">
+          <span class="script-accent">can't decide?</span>
+          <h2>Let us curate for you</h2>
+          <p>
+            Tell us your style and budget — we'll hand-pick a mini collection
+            and send it your way.
+          </p>
+          <a href="contact.html" class="btn btn-light"
+            >Request a Personal Styling <span class="arrow">→</span></a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- v20260805 -->
+    <!-- ══ FOOTER ═══════════════════════════════════════════ -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <a href="index.html" class="brand">
+              <img
+                src="images/logo.png"
+                alt="PE_ORIGINALS logo"
+                class="brand-logo"
+                onerror="this.style.display = 'none'"
+              />
+              <span class="brand-text">PE_<em>ORIGINALS</em></span>
+            </a>
+            <p>
+              Curated women's fashion. Authentic designer & highstreet, fresh,
+              stunning, and ready to wear — for all sizes.
+            </p>
+            <div class="footer-social">
+              <a href="#" aria-label="Instagram"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle
+                    cx="17.2"
+                    cy="6.8"
+                    r="1"
+                    fill="currentColor"
+                    stroke="none"
+                  /></svg
+              ></a>
+              <a href="#" aria-label="TikTok"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    d="M9 12a4.5 4.5 0 100 9 4.5 4.5 0 004.5-4.5V3c1.5 1 3 1.5 5 1.5"
+                  /></svg
+              ></a>
+              <a href="#" aria-label="Pinterest"
+                ><svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path
+                    d="M12 7.5c-2 0-3.5 1.4-3.5 3.4 0 1 .4 1.9 1.1 2.3l.6-2c-.1-.4-.3-.7-.3-1.2 0-1 .8-1.9 2-1.9 1.1 0 1.8.8 1.8 1.8 0 1.3-.6 2.6-1.4 2.6-.4 0-.7-.4-.6-.8l.5-2.1c-.2-.5-.8-.7-1.2-.4"
+                  /></svg
+              ></a>
+            </div>
+          </div>
+          <div class="footer-col">
+            <h4>Shop</h4>
+            <a href="shop.html">All Pieces</a>
+            <a href="shop.html?cat=dresses">Dresses</a>
+            <a href="shop.html?cat=tops">Tops &amp; Blouses</a>
+            <a href="shop.html?cat=outerwear">Outerwear</a>
+            <a href="shop.html?cat=accessories">Accessories</a>
+          </div>
+          <div class="footer-col">
+            <h4>Company</h4>
+            <a href="about.html">Our Story</a>
+            <a href="about.html#sustainability">Sustainability</a>
+            <a href="contact.html">Contact</a>
+            <a href="contact.html#faq">FAQ</a>
+          </div>
+          <div class="footer-col">
+            <h4>Stay in the loop</h4>
+            <p style="font-size: 13px; color: var(--ink-500)">
+              The prettiest finds, straight to your inbox.
+            </p>
+            <form
+              class="newsletter-form"
+              id="footerNewsForm"
+              style="margin-top: 14px"
+            >
+              <input
+                type="email"
+                placeholder="your@email.com"
+                required
+                aria-label="Email address"
+              />
+              <button type="submit" class="btn btn-sm" style="flex: none">
+                Join
+              </button>
+            </form>
+            <div class="footer-pay">
+              <span class="pay-badge">VISA</span>
+              <span class="pay-badge">Mastercard</span>
+              <span class="pay-badge">PayPal</span>
+              <span class="pay-badge">Apple Pay</span>
+            </div>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span
+            >© <span id="year">2026</span> PE_ORIGINALS. All rights reserved.
+            Made with 💗</span
+          >
+          <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms &amp; Conditions</a>
+            <a href="#">Shipping &amp; Returns</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ══ CART DRAWER ══════════════════════════════════════ -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping bag">
+      <div class="cart-header">
+        <h3>Your Bag <span id="cartCountLabel">0 items</span></h3>
+        <button class="cart-close" data-close-cart aria-label="Close cart">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-empty" id="cartEmpty">
+        <div class="cart-empty-ic">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+          >
+            <path d="M6 7h12l1.5 13.5h-15L6 7z" />
+            <path d="M9 10V6a3 3 0 016 0v4" />
+          </svg>
+        </div>
+        <h4>Your bag is empty</h4>
+        <p>Fill it with something beautiful 💗</p>
+        <button class="btn btn-sm" data-close-cart>Continue Shopping</button>
+      </div>
+      <div class="cart-footer" id="cartFooter">
+        <div class="cart-free-ship" id="shipNote"></div>
+        <div class="cart-free-ship" style="margin-bottom: 16px">
+          <span class="ship-bar"><span id="shipBar"></span></span>
+        </div>
+        <div class="cart-total-row">
+          <span>Subtotal</span><span id="cartSubtotal">₦0</span>
+        </div>
+        <div class="cart-total-row total">
+          <span>Total</span><span class="amount" id="cartTotal">₦0</span>
+        </div>
+        <p class="cart-ship-note">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M3 17h18M5 17V9a4 4 0 014-4h6a4 4 0 014 4v8" />
+            <circle cx="8" cy="20" r="2" />
+            <circle cx="16" cy="20" r="2" /></svg
+          >Shipping calculated at checkout
+        </p>
+        <button class="btn btn-block" data-checkout>Checkout</button>
+      </div>
+    </aside>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/api-bootstrap.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/store-config.js"></script>
+    <script src="js/paystack-inline.js"></script>
+  <script src="js/checkout.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/animations.js"></script>
+  </body>
+</html>

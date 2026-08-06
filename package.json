@@ -1,0 +1,19 @@
+{
+  "name": "pe-originals-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PE_ORIGINALS - full-stack e-commerce (Express + PostgreSQL + Prisma + optional Redis)",
+  "scripts": {
+    "setup": "cd backend && npm install && npx prisma migrate dev --name init && npm run seed",
+    "dev": "cd backend && npm run dev",
+    "start": "node backend/src/server.js",
+    "seed": "cd backend && npm run seed",
+    "migrate": "cd backend && npx prisma migrate deploy",
+    "build": "npm install --prefix backend && npm run prisma:generate --prefix backend",
+    "postinstall": "npm install --prefix backend --omit=dev && npm run prisma:generate --prefix backend"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

@@ -1,0 +1,28 @@
+# ============================================================
+# PE_ORIGINALS — backend/.gitignore
+# Backend-specific ignores (on top of the root .gitignore).
+# ============================================================
+
+# ---- Dependencies ----
+node_modules/
+
+# ---- Environment — real secrets live here, NEVER commit ----
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ---- Runtime uploads (product images uploaded via admin) ----
+uploads/*
+!uploads/.gitkeep
+
+# ---- Prisma generated client + local DB files ----
+node_modules/.prisma/
+node_modules/@prisma/
+prisma/*.db
+prisma/*.db-journal
+
+# ---- Logs / temp ----
+*.log
+logs/
+tmp/

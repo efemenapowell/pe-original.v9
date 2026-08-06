@@ -1,0 +1,277 @@
+// ============================================================
+// PE_ORIGINALS — Prisma Schema
+// PostgreSQL database schema for the full-stack e-commerce app.
+//
+// Models:
+//   User, Admin, Product, Category, Order, OrderItem,
+//   Cart, CartItem, PasswordResetToken, ContentBlock
+//
+// Migration commands (run from backend/):
+//   npx prisma migrate dev --name init
+//   npx prisma generate
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------
+// USERS — customers of the store
+// ------------------------------------------------------------
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String?
+  lastName     String?
+  phone        String?
+  address      String?
+  city         String?
+  country      String?
+  role         String   @default("CUSTOMER") // CUSTOMER | (reserved)
+  emailVerified Boolean @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  carts    Cart[]
+  orders   Order[]
+  resetTokens PasswordResetToken[]
+  @@index([email])
+  @@index([createdAt])
+}
+
+// ------------------------------------------------------------
+// ADMINS — store staff (separate table, never exposed publicly)
+// ------------------------------------------------------------
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("ADMIN") // ADMIN | SUPER_ADMIN
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  resetTokens PasswordResetToken[]
+  @@index([email])
+}
+
+// ------------------------------------------------------------
+// CATEGORIES — e.g. dresses, tops, outerwear, accessories
+// ------------------------------------------------------------
+model Category {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  name      String
+  image     String?           // path or URL
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+// ------------------------------------------------------------
+// PRODUCTS — the clothing items for resale
+// ------------------------------------------------------------
+model Product {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  name          String
+  brand         String
+  description   String   @default("")
+  price         Int      // selling price (minor units — Naira, no decimals)
+  originalPrice Int      @default(0) // 0 = no sale
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  sizes         Json     @default("[]")   // e.g. ["XS","S","M","L"]
+  soldSizes     Json     @default("[]")   // e.g. ["XL"]
+  image         String   // main image path
+  gallery       Json     @default("[]")   // array of image paths
+  badge         String   @default("")     // '' | 'sale' | 'new' | 'sold'
+  rating        Float    @default(0)
+  reviews       Int      @default(0)
+  condition     String   @default("")
+  featured      Boolean  @default(false)
+  isActive      Boolean  @default(true)   // soft delete
+  stock         Int      @default(1)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([featured])
+  @@index([createdAt])
+  @@index([price])
+}
+
+// ------------------------------------------------------------
+// ORDERS — checkout results
+// ------------------------------------------------------------
+model Order {
+  id            String   @id @default(uuid())
+  orderNumber   String   @unique // human-readable, e.g. PE-20260805-XXXX
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  status        String   @default("PENDING") // PENDING | PAID | SHIPPED | DELIVERED | CANCELLED
+  subtotal      Int
+  shipping      Int      @default(0)
+  total         Int
+  currency      String   @default("NGN")
+
+  // shipping details (snapshot — immune to later address edits)
+  shipFirstName String
+  shipLastName  String
+  shipEmail     String
+  shipPhone     String
+  shipAddress   String
+  shipCity      String
+  shipState     String
+  shipZip       String?
+  shipCountry   String   @default("Nigeria")
+
+  // payment placeholder fields (swap for real gateway later)
+  paymentMethod String   @default("CARD")
+  paymentStatus String   @default("PENDING") // PENDING | PAID | FAILED | REFUNDED
+  paymentRef    String?
+
+  // coupon applied at checkout (optional)
+  couponId     String?
+  coupon       Coupon?  @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponCode   String?  // snapshot of the code at purchase time
+  discount     Int      @default(0) // total discount applied (naira)
+
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([orderNumber])
+}
+
+// ------------------------------------------------------------
+// ORDER ITEMS — line items of an order
+// ------------------------------------------------------------
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  name        String   // snapshot of product name
+  brand       String   @default("")
+  image       String   @default("")
+  size        String
+  qty         Int
+  price       Int      // unit price at purchase time
+  subtotal    Int      // price * qty
+
+  @@index([orderId])
+}
+
+// ------------------------------------------------------------
+// CARTS — one per user (guests use localStorage on the client)
+// ------------------------------------------------------------
+model Cart {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items CartItem[]
+}
+
+// ------------------------------------------------------------
+// CART ITEMS
+// ------------------------------------------------------------
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      String
+  qty       Int      @default(1)
+  createdAt DateTime @default(now())
+
+  @@unique([cartId, productId, size])
+  @@index([productId])
+}
+
+// ------------------------------------------------------------
+// PASSWORD RESET TOKENS — single table serves users + admins
+// ------------------------------------------------------------
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  tokenHash String    @unique // sha256 hash of the raw token
+  userId    String?   // set when the request is for a User
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminId   String?   // set when the request is for an Admin
+  admin     Admin?    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([tokenHash])
+  @@index([expiresAt])
+}
+
+// ------------------------------------------------------------
+// CONTENT BLOCKS — editable site content (hero, about, banners…)
+// Keyed by a stable string so the frontend can look them up:
+//   "hero.title", "hero.subtitle", "about.text", "banner.1.image" …
+// ------------------------------------------------------------
+model ContentBlock {
+  id        String   @id @default(uuid())
+  key       String   @unique   // e.g. "hero.title"
+  value     String   @default("") // JSON-encoded for structured blocks
+  type      String   @default("text") // text | image | json
+  isActive  Boolean  @default(true)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@index([key])
+}
+
+// ------------------------------------------------------------
+// COUPONS — discount codes applied at checkout
+// type: PERCENTAGE (value = % off) | FIXED (value = ₦ off)
+// ------------------------------------------------------------
+model Coupon {
+  id            String    @id @default(uuid())
+  code          String    @unique // e.g. "WELCOME10" (stored uppercase)
+  type          String    @default("PERCENTAGE") // PERCENTAGE | FIXED
+  value         Int       // 10 (percent) or 5000 (naira)
+  minOrderAmount Int      @default(0) // minimum cart subtotal to use
+  maxDiscount   Int       @default(0) // 0 = no cap (percentage only)
+  usageLimit    Int       @default(0) // 0 = unlimited
+  usedCount     Int       @default(0)
+  validFrom     DateTime?
+  validUntil    DateTime?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orders Order[]
+
+  @@index([code])
+  @@index([isActive])
+  @@index([validUntil])
+}
