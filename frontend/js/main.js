@@ -718,7 +718,7 @@ function renderProductCard(p, opts = {}) {
           </div>
           <div class="accordion-item">
             <button class="accordion-head">Shipping & Delivery <span class="a-icon">+</span></button>
-            <div class="accordion-body"><div class="accordion-body-inner"><ul><li>Free shipping on orders over ${money(Cart.FREE_SHIP_THRESHOLD)}</li><li>Standard delivery: 2–4 business days (₦6,900)</li><li>Express delivery: next-day (₦12,900)</li><li>Every order arrives in recyclable, gift-ready packaging</li></ul></div></div>
+            <div class="accordion-body"><div class="accordion-body-inner"><ul><li>Free shipping on orders over ${money(Cart.FREE_SHIP_THRESHOLD)}</li><li>Standard delivery: 2–4 business days (${money((window.PEO_SETTINGS && window.PEO_SETTINGS.shipping.flatShipRate) || 5000)})</li><li>Every order arrives in recyclable, gift-ready packaging</li></ul></div></div>
           </div>
           <div class="accordion-item">
             <button class="accordion-head">Returns & Authenticity <span class="a-icon">+</span></button>
