@@ -722,7 +722,7 @@ function renderProductCard(p, opts = {}) {
           </div>
           <div class="accordion-item">
             <button class="accordion-head">Returns & Authenticity <span class="a-icon">+</span></button>
-            <div class="accordion-body"><div class="accordion-body-inner"><ul><li>30-day return window, no questions asked</li><li>Full refund once the piece is received back in original condition</li><li>All designer pieces are authenticated by our in-house team</li></ul></div></div>
+            <div class="accordion-body"><div class="accordion-body-inner"><ul><li>2-day return window — unworn, with tags attached</li><li>Refunds processed within 36 hours of receipt</li><li>All designer pieces are authenticated by our in-house team</li></ul></div></div>
           </div>
         </div>
       </div>
