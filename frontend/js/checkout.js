@@ -222,7 +222,8 @@
         });
       }
     } else if (step === "payment") {
-      const { data, totals } = arguments[1];
+      const data = arguments[1];
+      const totals = arguments[2];
       const store = window.PEO_STORE || {};
       const bank = store.bank || {};
       body.innerHTML = `
