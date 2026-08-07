@@ -34,12 +34,20 @@ app.use(
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com', 'https://js.paystack.co'],
         scriptSrcAttr: ["'unsafe-inline'"], // classic storefront uses onclick= inline handlers
-        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://fonts.googleapis.com',
+          'https://fonts.gstatic.com',
+          'https://paystack.com',
+        ],
         fontSrc: ["'self'", 'data:', 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
         connectSrc: ["'self'", 'https://api.paystack.co'],
-        // Paystack Inline renders its payment form in an iframe:
-        frameSrc: ["'self'", 'https://paystack.com'],
+        // Paystack Inline renders its payment form in an iframe served
+        // from checkout.paystack.com (paystack.com itself is used for
+        // its static assets like button.min.css, not the iframe):
+        frameSrc: ["'self'", 'https://paystack.com', 'https://checkout.paystack.com'],
         objectSrc: ["'none'"],
         frameAncestors: ["'none'"],
         baseUri: ["'self'"],
