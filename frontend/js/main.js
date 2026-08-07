@@ -764,6 +764,14 @@ function renderProductCard(p, opts = {}) {
       </div>
     </div>`;
 
+    // The gallery/info block above is injected after the page has
+    // already loaded, so the scroll-reveal observer (which only scans
+    // for .reveal elements once, on DOMContentLoaded) never saw it and
+    // it would otherwise stay invisible (opacity: 0) forever. Re-run it
+    // now so this freshly-inserted content gets picked up immediately.
+    if (window.PEAnim && typeof window.PEAnim.refreshReveals === "function")
+      window.PEAnim.refreshReveals();
+
     // gallery switching
     $$(".gallery-thumb").forEach((t) => {
       t.addEventListener("click", () => {

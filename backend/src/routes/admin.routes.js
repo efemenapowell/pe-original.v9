@@ -22,6 +22,30 @@ const router = Router();
 router.use(adminLimiter);
 router.use(requireAdmin);
 
+/**
+ * Multipart/form-data (used for product create/update, since it also
+ * carries image files) can only send plain strings — arrays like
+ * `sizes` arrive as a JSON string (e.g. '["S","M"]') rather than a
+ * real array. Parse those fields back into arrays before Zod
+ * validation runs, or validation always rejects them.
+ */
+function parseJsonArrayFields(...fields) {
+  return (req, res, next) => {
+    for (const field of fields) {
+      const val = req.body[field];
+      if (typeof val === 'string' && val.trim() !== '') {
+        try {
+          const parsed = JSON.parse(val);
+          if (Array.isArray(parsed)) req.body[field] = parsed;
+        } catch {
+          // leave as-is; validation will report a clear error
+        }
+      }
+    }
+    next();
+  };
+}
+
 // --------------------------------------------------------------
 // PRODUCTS
 // --------------------------------------------------------------
@@ -85,6 +109,7 @@ router.get(
 router.post(
   '/products',
   uploadImages('images', 8),
+  parseJsonArrayFields('sizes', 'soldSizes', 'gallery'),
   validate(productSchema),
   asyncHandler(async (req, res) => {
     const data = req.body;
@@ -133,6 +158,7 @@ router.post(
 router.put(
   '/products/:id',
   uploadImages('images', 8),
+  parseJsonArrayFields('sizes', 'soldSizes', 'gallery'),
   validate(productSchema),
   asyncHandler(async (req, res) => {
     const existing = await prisma.product.findUnique({ where: { id: req.params.id } });
