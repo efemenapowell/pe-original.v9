@@ -54,18 +54,81 @@ const ScrollLock = {
 };
 
 /* ── Nav search icon (pages other than shop.html) ─────────
-   Prompts for a quick search term and takes the shopper straight
-   to the shop page with that search already applied via ?search=.
-   On shop.html itself, the icon just focuses the inline search box
-   instead (see shop.html's onclick). ──────────────────────── */
-window.peoNavSearch = function peoNavSearch() {
-  const q = window.prompt("Search PE_ORIGINALS for…");
-  if (q === null) return; // cancelled
-  const query = q.trim();
-  window.location.href = query
-    ? "shop.html?search=" + encodeURIComponent(query)
-    : "shop.html";
-};
+   Opens a small styled search modal (built lazily below, matching
+   the cart-drawer / mobile-menu visual language) and sends the
+   shopper to the shop page with ?search= applied on submit.
+   Closes on: the × button, clicking the dimmed backdrop outside
+   the panel, pressing Esc, or a successful search.
+   On shop.html itself, the icon just focuses the inline search
+   box instead (see shop.html's onclick). ──────────────────────── */
+(function initSearchModal() {
+  let overlay, panel, input, form, closeBtn;
+
+  function build() {
+    if (overlay) return;
+    overlay = document.createElement("div");
+    overlay.className = "search-overlay";
+    overlay.innerHTML = `
+      <div class="search-panel" role="dialog" aria-modal="true" aria-label="Search PE_ORIGINALS">
+        <button type="button" class="search-panel-close" aria-label="Close search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+        <span class="search-panel-eyebrow">Find your next piece</span>
+        <h3>Search PE_ORIGINALS</h3>
+        <form class="search-panel-form">
+          <svg class="search-panel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input type="search" placeholder="Dresses, brands, “linen trousers”…" aria-label="Search products" />
+        </form>
+        <p class="search-panel-hint">Press <kbd>Enter</kbd> to search, or <kbd>Esc</kbd> to close</p>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    panel = overlay.querySelector(".search-panel");
+    input = overlay.querySelector("input");
+    form = overlay.querySelector(".search-panel-form");
+    closeBtn = overlay.querySelector(".search-panel-close");
+
+    // Close triggers — X button, clicking the dimmed backdrop
+    // (i.e. anywhere outside the panel), and Esc.
+    closeBtn.addEventListener("click", close);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && overlay.classList.contains("active")) close();
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const query = input.value.trim();
+      close();
+      window.location.href = query
+        ? "shop.html?search=" + encodeURIComponent(query)
+        : "shop.html";
+    });
+  }
+
+  function open() {
+    build();
+    overlay.classList.add("active");
+    ScrollLock.lock();
+    input.value = "";
+    setTimeout(() => input.focus(), 250); // wait for the open transition
+  }
+
+  function close() {
+    if (!overlay || !overlay.classList.contains("active")) return;
+    overlay.classList.remove("active");
+    ScrollLock.unlock();
+    input.blur();
+  }
+
+  window.peoNavSearch = open;
+})();
 
 /* ── Sticky Nav ────────────────────────────────────────── */
 (function initNav() {

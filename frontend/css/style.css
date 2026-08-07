@@ -1685,6 +1685,146 @@ select {
   color: var(--blush-300);
 }
 
+/* ── Nav search modal ──────────────────────────────────────
+   Centered "spotlight" dialog (distinct from the cart's side
+   drawer) so search reads as quick + lightweight. Dims and blurs
+   the page behind it; closes via ×, Esc, or a click anywhere on
+   the dimmed backdrop outside the panel. ─────────────────────── */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  background: rgba(43, 34, 38, 0.5);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12vh 20px 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.search-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.search-panel {
+  position: relative;
+  width: min(560px, 100%);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 30px 80px rgba(139, 92, 103, 0.3);
+  padding: 38px 34px 30px;
+  text-align: center;
+  transform: translateY(-18px) scale(0.97);
+  opacity: 0;
+  transition:
+    transform 0.4s var(--ease-out),
+    opacity 0.3s ease;
+}
+.search-overlay.active .search-panel {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+.search-panel-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: var(--blush-50);
+  color: var(--ink-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+.search-panel-close:hover {
+  background: var(--blush-200);
+  color: var(--ink-900);
+}
+.search-panel-close svg {
+  width: 16px;
+  height: 16px;
+}
+.search-panel-eyebrow {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blush-600);
+  margin-bottom: 6px;
+}
+.search-panel h3 {
+  margin: 0 0 22px;
+  font-size: 26px;
+}
+.search-panel-form {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-panel-icon {
+  position: absolute;
+  left: 18px;
+  width: 19px;
+  height: 19px;
+  color: var(--blush-500);
+  pointer-events: none;
+}
+.search-panel-form input {
+  width: 100%;
+  padding: 16px 20px 16px 50px;
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--blush-200);
+  background: var(--blush-50);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink-900);
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+.search-panel-form input::placeholder {
+  color: var(--ink-300);
+}
+.search-panel-form input:focus {
+  border-color: var(--blush-500);
+  background: var(--white);
+}
+.search-panel-hint {
+  margin: 16px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-500);
+}
+.search-panel-hint kbd {
+  font-family: var(--font-body);
+  font-size: 11px;
+  background: var(--blush-50);
+  border: 1px solid var(--blush-200);
+  border-radius: 6px;
+  padding: 2px 6px;
+  color: var(--ink-700);
+}
+@media (max-width: 560px) {
+  .search-overlay {
+    padding: 9vh 16px 16px;
+  }
+  .search-panel {
+    padding: 30px 22px 24px;
+  }
+  .search-panel h3 {
+    font-size: 21px;
+  }
+}
+
 /* ── Page hero (inner pages) ───────────────────────────── */
 .page-hero {
   background: var(--grad-soft);
