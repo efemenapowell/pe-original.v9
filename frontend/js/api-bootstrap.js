@@ -1,15 +1,19 @@
 /* ============================================================
    PE_ORIGINALS — js/api-bootstrap.js
    Loads products & categories from the backend (/api/products,
-   /api/categories) and merges them into the live catalogue
-   (window.PRODUCTS / CATEGORIES / BRANDS, exposed by products.js).
+   /api/categories) into the live catalogue (window.PRODUCTS /
+   CATEGORIES / BRANDS, exposed by products.js).
 
    Design:
-   • Tries the API first. On ANY failure (backend down, static
-     hosting) it silently keeps the local products.js data, so
-     the site still works as a static demo.
-   • Merges API products with local ones by numeric id — API
-     items win (single source of truth when the backend is live).
+   • Tries the API first. Once the backend answers successfully,
+     window.PRODUCTS is REPLACED with backend products only — the
+     local products.js demo catalogue is never mixed in, even if
+     the store has zero products yet (storefront then shows its
+     normal "no products" empty state instead of demo items).
+   • The local products.js data is used ONLY as an offline/demo
+     fallback when the backend genuinely can't be reached (down,
+     static hosting, file:// preview) — so the site still renders
+     something in that situation.
    • Dispatches "peo:products" so main.js re-renders grids.
    • Runs AFTER products.js, BEFORE main.js.
    ============================================================ */
@@ -68,10 +72,10 @@
         { signal: controller.signal }
       );
       clearTimeout(timer);
-      if (!res.ok) return;
+      if (!res.ok) return; // server error → keep local demo fallback
 
       const json = await res.json();
-      if (!json || !json.data) return;
+      if (!json || !json.data) return; // malformed response → keep local demo fallback
 
       const apiItems = Array.isArray(json.data)
         ? json.data
@@ -90,8 +94,8 @@
         /* categories optional */
       }
 
-      if (!apiItems.length) return;
-
+      // Backend answered successfully — it's the live source of truth
+      // from here on, even if it currently has zero active products.
       const activeApiItems = apiItems.filter((p) => p.isActive !== false);
       const mapped = activeApiItems.map((p) => mapApiProduct(p, catMap));
 
@@ -105,20 +109,13 @@
         window.PEO_PRODUCT_MAP[mapped[i].id] = p.id;
       });
 
-      // Merge into the SAME arrays main.js reads (window-exposed).
-      const local = Array.isArray(window.PRODUCTS) ? window.PRODUCTS : [];
-      const merged = local.slice();
-
-      mapped.forEach((mp) => {
-        const idx = merged.findIndex((m) => m.id === mp.id);
-        if (idx >= 0) merged[idx] = mp;
-        else merged.push(mp);
-      });
-
-      // Replace the contents of the exposed arrays in place so all
-      // existing references (main.js closures) see the new data.
+      // Replace the contents of the exposed array in place (not merge)
+      // so all existing references (main.js closures) see ONLY real,
+      // admin-added products — the local products.js demo catalogue is
+      // dropped entirely once the backend is confirmed reachable.
+      window.PRODUCTS = window.PRODUCTS || [];
       window.PRODUCTS.length = 0;
-      merged.forEach((p) => window.PRODUCTS.push(p));
+      mapped.forEach((p) => window.PRODUCTS.push(p));
 
       // Rebuild derived globals
       const cats = Array.isArray(window.CATEGORIES) ? window.CATEGORIES : [];
@@ -131,7 +128,7 @@
       });
       window.BRANDS = [...new Set(window.PRODUCTS.map((p) => p.brand))].sort();
 
-      console.info("[api] loaded " + mapped.length + " products from backend");
+      console.info("[api] loaded " + mapped.length + " product(s) from backend");
       // Signal main.js to re-render grids/detail with fresh data
       window.dispatchEvent(
         new CustomEvent("peo:products", { detail: { count: mapped.length } })
