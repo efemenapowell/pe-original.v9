@@ -227,8 +227,12 @@
 
         <div class="hero-visual">
           <div class="hero-img-wrap">
-            <!-- Swap hero image: pe-originals/images/hero.jpg -->
-            <img src="images/products/p3.jpg" alt="Curated fashion" />
+            <!-- Managed from Admin → Site Content → Homepage Images -->
+            <img
+              src="images/placeholder.svg"
+              alt="Curated fashion"
+              data-content-key="home.hero.image"
+            />
           </div>
           <div class="hero-float-card fc-1">
             <div class="f-ic">
@@ -396,11 +400,11 @@
         </div>
         <div class="categories-grid stagger">
           <a href="shop.html?cat=dresses" class="category-card reveal">
-            <!-- Swap: pe-originals/images/cat-dresses.jpg -->
             <img
-              src="images/sections/cat-dresses.jpg"
+              src="images/placeholder.svg"
               alt="Dresses"
               loading="lazy"
+              data-content-key="home.category.dresses.image"
             />
             <div class="category-overlay">
               <span class="script-accent">flowy &amp; feminine</span>
@@ -412,9 +416,10 @@
           </a>
           <a href="shop.html?cat=tops" class="category-card reveal delay-1">
             <img
-              src="images/sections/cat-tops.jpg"
+              src="images/placeholder.svg"
               alt="Tops and blouses"
               loading="lazy"
+              data-content-key="home.category.tops.image"
             />
             <div class="category-overlay">
               <span class="script-accent">soft &amp; chic</span>
@@ -429,9 +434,10 @@
             class="category-card reveal delay-2"
           >
             <img
-              src="images/sections/cat-outerwear.jpg"
+              src="images/placeholder.svg"
               alt="Outerwear"
               loading="lazy"
+              data-content-key="home.category.outerwear.image"
             />
             <div class="category-overlay">
               <span class="script-accent">cozy elegance</span>
@@ -451,9 +457,10 @@
         <div class="split-banner reveal">
           <div class="split-banner-img">
             <img
-              src="images/sections/story.jpg"
+              src="images/placeholder.svg"
               alt="Sustainable fashion"
               loading="lazy"
+              data-content-key="home.story.image"
             />
           </div>
           <div class="split-banner-copy">
@@ -546,9 +553,10 @@
         <div class="insta-grid stagger">
           <a href="#" class="insta-item reveal"
             ><img
-              src="images/sections/insta1.jpg"
+              src="images/placeholder.svg"
               alt="Instagram post"
-              loading="lazy" /><span class="insta-overlay"
+              loading="lazy"
+              data-content-key="home.instagram.1" /><span class="insta-overlay"
               ><svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -567,9 +575,10 @@
           ></a>
           <a href="#" class="insta-item reveal delay-1"
             ><img
-              src="images/sections/insta2.jpg"
+              src="images/placeholder.svg"
               alt="Instagram post"
-              loading="lazy" /><span class="insta-overlay"
+              loading="lazy"
+              data-content-key="home.instagram.2" /><span class="insta-overlay"
               ><svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -588,9 +597,10 @@
           ></a>
           <a href="#" class="insta-item reveal delay-2"
             ><img
-              src="images/sections/insta3.jpg"
+              src="images/placeholder.svg"
               alt="Instagram post"
-              loading="lazy" /><span class="insta-overlay"
+              loading="lazy"
+              data-content-key="home.instagram.3" /><span class="insta-overlay"
               ><svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -609,9 +619,10 @@
           ></a>
           <a href="#" class="insta-item reveal delay-3"
             ><img
-              src="images/sections/insta1.jpg"
+              src="images/placeholder.svg"
               alt="Instagram post"
-              loading="lazy" /><span class="insta-overlay"
+              loading="lazy"
+              data-content-key="home.instagram.4" /><span class="insta-overlay"
               ><svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -630,9 +641,10 @@
           ></a>
           <a href="#" class="insta-item reveal delay-4"
             ><img
-              src="images/sections/insta2.jpg"
+              src="images/placeholder.svg"
               alt="Instagram post"
-              loading="lazy" /><span class="insta-overlay"
+              loading="lazy"
+              data-content-key="home.instagram.5" /><span class="insta-overlay"
               ><svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -867,6 +879,7 @@
     <script src="js/products.js"></script>
     <script src="js/api.js"></script>
     <script src="js/settings.js"></script>
+    <script src="js/site-images.js"></script>
     <script src="js/api-bootstrap.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/store-config.js"></script>

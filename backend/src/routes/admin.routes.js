@@ -290,7 +290,10 @@ router.delete(
 // --------------------------------------------------------------
 const contentSchema = z.object({
   key: z.string().min(2).max(120),
-  value: z.string().min(1),
+  // Optional here because image blocks may arrive as an uploaded file
+  // instead of a text value — the handler fills `value` from req.files
+  // and rejects the request if neither is present.
+  value: z.string().optional().default(''),
   type: z.enum(['text', 'image', 'json']).default('text'),
   isActive: z.coerce.boolean().optional().default(true),
 });
@@ -303,15 +306,21 @@ router.get(
   })
 );
 
+// ---- Create / overwrite a content block (supports image upload) ----
 router.post(
   '/content',
+  uploadImages('image', 1),
   validate(contentSchema),
   asyncHandler(async (req, res) => {
+    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const value = uploaded[0] || req.body.value;
+    if (!value) throw new ApiError(400, 'Provide a value or upload an image');
+
     // upsert by key — admin can add or overwrite any block
     const block = await prisma.contentBlock.upsert({
       where: { key: req.body.key },
-      create: req.body,
-      update: { value: req.body.value, type: req.body.type, isActive: req.body.isActive },
+      create: { key: req.body.key, value, type: req.body.type, isActive: req.body.isActive },
+      update: { value, type: req.body.type, isActive: req.body.isActive },
     });
     await cache.delByPattern('content:*');
     res.status(201).json({ success: true, data: block });
@@ -320,11 +329,16 @@ router.post(
 
 router.put(
   '/content/:key',
+  uploadImages('image', 1),
   validate(contentSchema),
   asyncHandler(async (req, res) => {
+    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const value = uploaded[0] || req.body.value;
+    if (!value) throw new ApiError(400, 'Provide a value or upload an image');
+
     const block = await prisma.contentBlock.update({
       where: { key: req.params.key },
-      data: req.body,
+      data: { value, type: req.body.type, isActive: req.body.isActive },
     });
     await cache.delByPattern('content:*');
     res.json({ success: true, data: block });

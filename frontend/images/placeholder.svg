@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <rect width="800" height="800" fill="#fdeef0"/>
+  <rect x="8" y="8" width="784" height="784" fill="none" stroke="#f29aa6" stroke-width="2" stroke-dasharray="10 8" rx="4"/>
+  <g transform="translate(400,352)" fill="none" stroke="#e59191" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="-70" y="-52" width="140" height="104" rx="10"/>
+    <circle cx="-32" cy="-18" r="12"/>
+    <path d="M-70 30 L-18 -10 L20 22 L45 2 L70 30"/>
+  </g>
+  <text x="400" y="470" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="22" fill="#a34452">Image not set</text>
+  <text x="400" y="500" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="15" fill="#c25566">Upload from the admin panel</text>
+</svg>

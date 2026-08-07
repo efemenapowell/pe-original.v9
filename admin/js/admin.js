@@ -507,6 +507,32 @@ async function deleteCategory(id, name) {
 // ============================================================
 // CONTENT (hero, about, banners…)
 // ============================================================
+
+// Known "heading" / marketing image slots the storefront looks up
+// via data-content-key — see frontend/js/site-images.js. Until an
+// image is uploaded here, the storefront shows a placeholder.
+const IMAGE_SLOTS = [
+  { key: 'home.hero.image', label: 'Homepage hero' },
+  { key: 'home.category.dresses.image', label: 'Category card — Dresses' },
+  { key: 'home.category.tops.image', label: 'Category card — Tops & Blouses' },
+  { key: 'home.category.outerwear.image', label: 'Category card — Outerwear' },
+  { key: 'home.story.image', label: 'Homepage "Luxury without the Guilt" banner' },
+  { key: 'home.instagram.1', label: 'Instagram strip — 1' },
+  { key: 'home.instagram.2', label: 'Instagram strip — 2' },
+  { key: 'home.instagram.3', label: 'Instagram strip — 3' },
+  { key: 'home.instagram.4', label: 'Instagram strip — 4' },
+  { key: 'home.instagram.5', label: 'Instagram strip — 5' },
+  { key: 'about.story.image', label: 'About page — "Born From One Endless Wishlist"' },
+  { key: 'about.sustainability.image', label: 'About page — "The Considered Wardrobe"' },
+];
+const IMAGE_SLOT_KEYS = new Set(IMAGE_SLOTS.map((s) => s.key));
+const PLACEHOLDER_THUMB =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"><rect width="200" height="150" fill="%23fdf2f7"/><text x="100" y="80" text-anchor="middle" font-family="sans-serif" font-size="13" fill="%23b04a74">No image set</text></svg>'
+      .replace(/%23/g, '#')
+  );
+
 function contentActions() {
   return `<button class="btn" onclick="addContentBlock()">+ Add block</button>`;
 }
@@ -517,12 +543,39 @@ async function renderContent() {
   try {
     const res = await API.getContent();
     state.content = res;
-    if (!res.length) {
-      body.innerHTML = `<div class="card card-pad empty"><div class="empty-icon">📝</div>No content blocks yet.</div>`;
-      return;
-    }
-    body.innerHTML = `<div class="content-blocks">
-      ${res.map((b) => `
+    const byKey = {};
+    res.forEach((b) => { byKey[b.key] = b; });
+    const otherBlocks = res.filter((b) => !IMAGE_SLOT_KEYS.has(b.key));
+
+    const imageSlotsHtml = `
+      <h3 style="margin:0 0 4px">Homepage Images</h3>
+      <p style="color:var(--ink-500);font-size:12.5px;margin:0 0 14px">
+        Upload a photo for each spot below and it appears on the storefront instantly.
+        Anything left empty shows a placeholder until you upload one.
+      </p>
+      <div class="image-slots">
+        ${IMAGE_SLOTS.map((slot) => {
+          const block = byKey[slot.key];
+          const isSet = block && block.value;
+          return `
+          <div class="image-slot">
+            <div class="is-thumb"><img src="${isSet ? esc(block.value) : PLACEHOLDER_THUMB}" alt="" onerror="this.src='${PLACEHOLDER_THUMB}'" /></div>
+            <div class="is-label">${esc(slot.label)}</div>
+            <span class="is-key">${esc(slot.key)}</span>
+            <span class="is-status ${isSet ? '' : 'unset'}">${isSet ? 'Image set' : 'Not set — placeholder showing'}</span>
+            <input type="file" accept="image/*" data-slot-key="${esc(slot.key)}" />
+            <div class="is-actions">
+              <button class="btn btn-sm btn-pink" onclick="saveImageSlot(this, '${esc(slot.key)}')">Upload</button>
+              ${isSet ? `<button class="btn btn-sm btn-danger" onclick="deleteContentBlock('${esc(slot.key)}')">Remove</button>` : ''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    const otherBlocksHtml = otherBlocks.length
+      ? `<h3 style="margin:26px 0 12px">Other Site Content</h3>
+      <div class="content-blocks">
+      ${otherBlocks.map((b) => `
         <div class="content-block">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
             <span class="cb-key">${esc(b.key)}</span>
@@ -538,9 +591,37 @@ async function renderContent() {
       <p style="color:var(--ink-500);font-size:12.5px;margin-top:14px">
         Keys are looked up by the storefront (e.g. <code>hero.title</code>, <code>hero.subtitle</code>, <code>about.story</code>).
         JSON blocks store structured data (banners, values, contact info).
-      </p>`;
+      </p>`
+      : '';
+
+    body.innerHTML = imageSlotsHtml + otherBlocksHtml;
   } catch (err) {
     body.innerHTML = `<div class="card card-pad empty">${esc(err.message)}</div>`;
+  }
+}
+
+async function saveImageSlot(btn, key) {
+  const slot = btn.closest('.image-slot');
+  const input = slot.querySelector(`input[type="file"][data-slot-key="${CSS.escape(key)}"]`);
+  const file = input.files && input.files[0];
+  if (!file) { toast('Choose an image first', 'err'); return; }
+
+  const fd = new FormData();
+  fd.append('key', key);
+  fd.append('type', 'image');
+  fd.append('image', file);
+
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Uploading…';
+  try {
+    await API.saveContentBlock(fd);
+    toast('Image saved — store updates instantly ✨');
+    renderContent();
+  } catch (err) {
+    toast(err.message, 'err');
+    btn.disabled = false;
+    btn.textContent = original;
   }
 }
 

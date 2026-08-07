@@ -128,7 +128,7 @@ class AdminAPI {
 
   // ---- content ----
   getContent() { return this.request('GET', '/api/admin/content'); }
-  saveContentBlock(data) { return this.request('POST', '/api/admin/content', data); }
+  saveContentBlock(data) { return this.request('POST', '/api/admin/content', data, data instanceof FormData); }
   deleteContentBlock(key) { return this.request('DELETE', `/api/admin/content/${encodeURIComponent(key)}`); }
 
   // ---- coupons ----
