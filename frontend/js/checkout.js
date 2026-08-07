@@ -84,6 +84,7 @@
   function openWhatsAppOrder(order) {
     const store = window.PEO_STORE || {};
     const num = (store.whatsappNumber || "").replace(/[^\d]/g, "");
+    const base = store.whatsappLink || `https://wa.me/${num}`;
     const lines = (order.items || []).map((i) => `• ${i.name} (${i.size}) x${i.qty}`).join("\n");
     const msg =
       `Hi PE_ORIGINALS! I just placed order ${order.orderNumber}.\n\n` +
@@ -91,7 +92,7 @@
       `Total: ${money(order.total)}\n` +
       `Name: ${order.shipFirstName || ""}\n` +
       `Delivery: ${order.shipAddress || ""}, ${order.shipCity || ""}, ${order.shipState || ""}`;
-    const url = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+    const url = `${base}?text=${encodeURIComponent(msg)}`;
     window.open(url, "_blank", "noopener");
   }
 
