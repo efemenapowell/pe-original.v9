@@ -74,12 +74,14 @@ async function bustProductCache() {
   await cache.delByPattern('products:*');
 }
 
-// ---- List all products (admin view incl. inactive) ------------
+// ---- List products (active by default; deleted ones are hidden
+//      unless ?status=all is explicitly requested) --------------
 router.get(
   '/products',
   asyncHandler(async (req, res) => {
-    const { page = 1, limit = 24, search, category } = req.query;
+    const { page = 1, limit = 24, search, category, status } = req.query;
     const where = {};
+    if (status !== 'all') where.isActive = true;
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
