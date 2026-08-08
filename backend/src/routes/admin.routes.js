@@ -13,7 +13,7 @@ const prisma = require('../lib/prisma');
 const cache = require('../lib/cache');
 const { requireAdmin } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
-const { uploadImages } = require('../middleware/upload');
+const { uploadImages } = require('../middleware/uploadS3');
 const { adminLimiter } = require('../middleware/rateLimiter');
 const { ApiError } = require('../middleware/errorHandler');
 const { asyncHandler, slugify } = require('../utils/helpers');
@@ -117,7 +117,7 @@ router.post(
     const data = req.body;
 
     // Use uploaded files if present, else keep provided image paths
-    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const uploaded = (req.uploadedFiles || []).map((f) => f.url);
     const image = uploaded[0] || data.image || '';
     const gallery = uploaded.length > 1 ? uploaded : data.gallery || (image ? [image] : []);
 
@@ -167,7 +167,7 @@ router.put(
     if (!existing) throw new ApiError(404, 'Product not found');
 
     const data = req.body;
-    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const uploaded = (req.uploadedFiles || []).map((f) => f.url);
     const image = uploaded[0] || data.image || existing.image;
     const gallery =
       uploaded.length > 1 ? uploaded : data.gallery && data.gallery.length ? data.gallery : existing.gallery;
@@ -240,7 +240,7 @@ router.post(
   uploadImages('image', 1),
   validate(categorySchema),
   asyncHandler(async (req, res) => {
-    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const uploaded = (req.uploadedFiles || []).map((f) => f.url);
     const image = uploaded[0] || req.body.image || '';
     const slug = req.body.slug || slugify(req.body.name);
     const category = await prisma.category.create({
@@ -258,7 +258,7 @@ router.put(
   asyncHandler(async (req, res) => {
     const existing = await prisma.category.findUnique({ where: { id: req.params.id } });
     if (!existing) throw new ApiError(404, 'Category not found');
-    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const uploaded = (req.uploadedFiles || []).map((f) => f.url);
     const category = await prisma.category.update({
       where: { id: existing.id },
       data: {
@@ -312,7 +312,7 @@ router.post(
   uploadImages('image', 1),
   validate(contentSchema),
   asyncHandler(async (req, res) => {
-    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const uploaded = (req.uploadedFiles || []).map((f) => f.url);
     const value = uploaded[0] || req.body.value;
     if (!value) throw new ApiError(400, 'Provide a value or upload an image');
 
@@ -332,7 +332,7 @@ router.put(
   uploadImages('image', 1),
   validate(contentSchema),
   asyncHandler(async (req, res) => {
-    const uploaded = (req.files || []).map((f) => `/uploads/${f.filename}`);
+    const uploaded = (req.uploadedFiles || []).map((f) => f.url);
     const value = uploaded[0] || req.body.value;
     if (!value) throw new ApiError(400, 'Provide a value or upload an image');
 
