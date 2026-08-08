@@ -221,7 +221,13 @@ const Cart = {
     this.save(items);
   },
   count() {
-    return this.get().reduce((n, i) => n + i.qty, 0);
+    // Only count items whose product still exists — keeps the badge in
+    // sync with the drawer, which already skips items it can't resolve
+    // (e.g. a stale cart entry left over from a product that was
+    // removed/deactivated, or from testing before real products existed).
+    return this.get().reduce((n, i) => {
+      return getProductById(i.id) ? n + i.qty : n;
+    }, 0);
   },
   subtotal() {
     return this.get().reduce((sum, i) => {

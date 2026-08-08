@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # PE_ORIGINALS — Full-Stack E-Commerce Platform
 
 [![Railway Ready](https://img.shields.io/badge/Railway-ready-0b0d0e?logo=railway)](HOSTING.md)
@@ -307,7 +306,3 @@ git push -u origin main
 ## 🤝 Support & License
 
 Built for PE_ORIGINALS. MIT licensed. See `backend/package.json` for dependencies.
-=======
-# pe-original.v9
-a simple fullstack website
->>>>>>> a4db60f43f31d4c7c373bf9513595ab2e2a149ee
