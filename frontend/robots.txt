@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /checkout.html
+Disallow: /account.html
+Disallow: /reset-password.html
+Disallow: /admin
+Disallow: /api
+
+Sitemap: https://pe-originals.store/sitemap.xml
