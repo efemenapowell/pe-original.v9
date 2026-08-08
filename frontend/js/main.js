@@ -457,7 +457,7 @@ function renderProductCard(p, opts = {}) {
   <article class="product-card reveal${opts.delay ? " delay-" + opts.delay : ""}" data-cat="${p.category}" data-id="${p.id}">
     <a href="product.html?id=${p.id}" class="product-media zoom-img">
       <img src="${p.image}" alt="${p.name}" loading="lazy"
-           onerror="this.onerror=null;this.src='https://picsum.photos/seed/peo-fallback/600/800';">
+           onerror="this.parentElement.style.display='none'">
       <div class="product-badges">${badgeHtml}</div>
       <button class="wishlist-btn" data-wishlist aria-label="Add to wishlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.9 1.2 4.8 3 0.9-1.8 2.6-3 4.8-3 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
