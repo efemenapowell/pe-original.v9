@@ -82,7 +82,7 @@ const ScrollLock = {
             <circle cx="11" cy="11" r="7" />
             <path d="M21 21l-4.35-4.35" />
           </svg>
-          <input type="search" placeholder="Dresses, brands, “linen trousers”…" aria-label="Search products" />
+          <input type="search" placeholder="Dresses, brands, "linen trousers"…" aria-label="Search products" />
         </form>
         <p class="search-panel-hint">Press <kbd>Enter</kbd> to search, or <kbd>Esc</kbd> to close</p>
       </div>`;
@@ -217,7 +217,7 @@ const Cart = {
     const items = this.get();
     const item = items.find((i) => i.id === Number(id) && i.size === size);
     if (!item) return;
-    item.qty = Math.max(1, Math.min(9, qty));
+    item.qty = Math.max(1, Math.min(20, qty));
     this.save(items);
   },
   count() {
@@ -239,7 +239,7 @@ const Cart = {
     const badge = $(".cart-count");
     if (!badge) return;
     const n = this.count();
-    badge.textContent = n;
+    badge.textContent = n || "0";
     badge.classList.toggle("visible", n > 0);
   },
   /* ── Cart drawer rendering ── */
@@ -448,7 +448,7 @@ document.addEventListener("peo:settings-ready", () => {
   Cart.renderDrawer();
 })();
 
-/* ── Product card renderer (shared) ────────────────────── */
+/* ── Product card renderer (shared) ─────────────────────── */
 function renderProductCard(p, opts = {}) {
   const sold = p.badge === "sold" || p.sizes.length === 0;
   const discount =
@@ -456,14 +456,14 @@ function renderProductCard(p, opts = {}) {
       ? Math.round((1 - p.price / p.originalPrice) * 100)
       : 0;
   const badgeHtml = p.badge
-    ? `<span class="badge badge-${p.badge}">${p.badge === "sale" ? `−${discount}%` : p.badge}</span>`
+    ? `<span class="badge badge-${p.badge}">${p.badge === "sale" ? `-${discount}%` : p.badge}</span>`
     : "";
 
   return `
   <article class="product-card reveal${opts.delay ? " delay-" + opts.delay : ""}" data-cat="${p.category}" data-id="${p.id}">
     <a href="product.html?id=${p.id}" class="product-media zoom-img">
       <img src="${p.image}" alt="${p.name}" loading="lazy"
-           onerror="this.onerror=null;this.src='https://picsum.photos/seed/peo-fallback/600/800';">
+           onerror="this.parentElement.style.display='none'">
       <div class="product-badges">${badgeHtml}</div>
       <button class="wishlist-btn" data-wishlist aria-label="Add to wishlist">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.9 1.2 4.8 3 0.9-1.8 2.6-3 4.8-3 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
@@ -668,374 +668,50 @@ function renderProductCard(p, opts = {}) {
         if (label) label.textContent = "₦300,000";
       }
       if (searchInput) searchInput.value = "";
-      if (sortSel) sortSel.value = "featured";
       applyFilters();
     });
 
-  // collapsible filter groups
-  $$(".filter-group h4").forEach((h) => {
-    h.addEventListener("click", () =>
-      h.parentElement.classList.toggle("collapsed"),
-    );
-  });
-
-  // mobile filter panel
-  const mBtn = $("#mobileFilterBtn");
-  const panel = $("#filtersPanel");
-  if (mBtn && panel) {
-    mBtn.addEventListener("click", () => panel.classList.add("open"));
-    const closeBtn = $("#filtersClose");
-    if (closeBtn)
-      closeBtn.addEventListener("click", () => panel.classList.remove("open"));
-    // overlay
-    const fo = $("#filtersOverlay");
-    if (fo) fo.addEventListener("click", () => panel.classList.remove("open"));
-    // close on filter click (mobile)
-    panel.addEventListener("click", (e) => {
-      if (e.target.closest(".filter-option") || e.target.closest("input")) {
-        if (window.innerWidth < 900) {
-          // keep open for multi-select; only close when tapping "Apply"
-        }
-      }
-    });
-  }
-
   applyFilters();
-  // Re-render when backend products arrive (api-bootstrap)
-  window.addEventListener("peo:products", () => {
-    // rebuild brand/size options is heavy; just re-apply filters
-    applyFilters();
+})();
+
+/* ── Forms & validation ────────────────────────────────── */
+(function () {
+  document.addEventListener("submit", (e) => {
+    const form = e.target;
+    const needsVal = form.classList.contains("needs-validate");
+    if (!needsVal) return;
+
+    // Bootstrap-style validation display
+    let valid = true;
+    $$(":invalid", form).forEach((f) => {
+      f.classList.add("error");
+      valid = false;
+    });
+    if (!valid) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  });
+
+  // Clear error on input
+  document.addEventListener("input", (e) => {
+    const f = e.target;
+    if (f.classList.contains("error")) {
+      if (f.validity.valid) f.classList.remove("error");
+    }
   });
 })();
 
-/* ── Product detail page ───────────────────────────────── */
-(function initProductPage() {
-  const root = $("#productDetail");
-  if (!root) return;
-
-  function render() {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id") || 1;
-    const p = getProductById(id);
-    if (!p) {
-      root.innerHTML =
-        '<p style="text-align:center;padding:60px 0;">Product not found.</p>';
-      return;
-    }
-
-    const images = p.gallery && p.gallery.length ? p.gallery : [p.image];
-    const discount =
-      p.originalPrice > p.price
-        ? Math.round((1 - p.price / p.originalPrice) * 100)
-        : 0;
-    const sold = p.badge === "sold" || p.sizes.length === 0;
-    const availableSizes = p.sizes.filter(
-      (s) => !(p.soldSizes || []).includes(s),
-    );
-
-    document.title = p.name + " — PE_ORIGINALS";
-
-    root.innerHTML = `
-    <div class="product-detail-grid">
-      <!-- Gallery -->
-      <div class="gallery reveal">
-        <div class="gallery-thumbs">
-          ${images
-            .map(
-              (img, i) => `
-            <button class="gallery-thumb${i === 0 ? " active" : ""}" data-img="${img}" aria-label="View image ${i + 1}">
-              <img src="${img}" alt="${p.name} view ${i + 1}" loading="lazy" onerror="this.onerror=null;this.src='https://picsum.photos/seed/peo-fallback/600/800';">
-            </button>`,
-            )
-            .join("")}
-        </div>
-        <div class="gallery-main">
-          <img id="galleryMainImg" src="${images[0]}" alt="${p.name}" onerror="this.onerror=null;this.src='https://picsum.photos/seed/peo-fallback/600/800';">
-          ${p.badge ? `<span class="badge badge-${p.badge}">${p.badge === "sale" ? "−" + discount + "%" : p.badge}</span>` : ""}
-          <span class="gallery-zoom-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg>Hover to zoom</span>
-        </div>
-      </div>
-
-      <!-- Info -->
-      <div class="pd-info reveal">
-        <div class="pd-brand">${p.brand} · ${getCategoryLabel(p.category)}</div>
-        <h1 class="pd-title">${p.name}</h1>
-        <div class="pd-rating">
-          <span class="stars">${"★".repeat(Math.round(p.rating))}${"☆".repeat(5 - Math.round(p.rating))}</span>
-          <span>${p.rating} · ${p.reviews} reviews</span>
-        </div>
-        <div class="pd-price-row">
-          <span class="pd-price">₦${Number(p.price).toLocaleString("en-NG")}</span>
-          ${p.originalPrice > p.price ? `<span class="pd-price-old">₦${Number(p.originalPrice).toLocaleString("en-NG")}</span><span class="pd-save-badge">Save ${discount}%</span>` : ""}
-        </div>
-        <p class="pd-condition"><strong>Condition:</strong> ${p.condition || "New"}</p>
-        <p class="pd-desc">${p.description}</p>
-
-        ${
-          sold
-            ? `
-          <div style="background:var(--blush-100);border-radius:var(--radius);padding:18px 22px;margin-bottom:26px;">
-            <strong style="color:var(--blush-700);">This piece has found its new home 💗</strong>
-            <p style="font-size:13.5px;margin:6px 0 0;">Sold out — check the shop for similar treasures, or follow us to catch the next drop.</p>
-          </div>`
-            : `
-          <!-- Size selector -->
-          <div class="size-selector">
-            <div class="size-selector-label">
-              <span>Select Size ${availableSizes.length ? "— " + availableSizes.join(" / ") : ""}</span>
-              <a href="#" class="size-guide" onclick="return false;">Size guide</a>
-            </div>
-            <div class="size-options" id="sizeOptions">
-              ${p.sizes
-                .map(
-                  (s) => `
-                <button class="size-option${(p.soldSizes || []).includes(s) ? " disabled" : ""}" data-size="${s}">${s}</button>
-              `,
-                )
-                .join("")}
-            </div>
-            <p class="size-error" id="sizeError">Please choose a size first 💕</p>
-          </div>
-
-          <!-- Quantity -->
-          <div class="qty-selector">
-            <span>Quantity</span>
-            <div class="qty-control lg">
-              <button id="qtyMinus" aria-label="Decrease">−</button>
-              <span class="qty-val" id="qtyVal">1</span>
-              <button id="qtyPlus" aria-label="Increase">+</button>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="pd-actions">
-            <button class="btn btn-add" data-product-id="${p.id}">Add to Bag <span class="arrow">→</span></button>
-            <button class="pd-wish-btn" data-wishlist aria-label="Add to wishlist">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7.5-4.7-10-9.3C.5 8 2.6 4.5 6.2 4.5c2.2 0 3.9 1.2 4.8 3 0.9-1.8 2.6-3 4.8-3 3.6 0 5.7 3.5 4.2 7.2C19.5 16.3 12 21 12 21z"/></svg>
-            </button>
-          </div>`
-        }
-        <!-- Accordion -->
-        <div class="accordion">
-          <div class="accordion-item">
-            <button class="accordion-head">Description & Fit <span class="a-icon">+</span></button>
-            <div class="accordion-body"><div class="accordion-body-inner">${p.description}<br><br>True to size. Model wears S. Fabric: please refer to the brand's care label; we photograph and describe exactly what you'll receive.</div></div>
-          </div>
-          <div class="accordion-item">
-            <button class="accordion-head">Shipping & Delivery <span class="a-icon">+</span></button>
-            <div class="accordion-body"><div class="accordion-body-inner"><ul><li>Free shipping on orders over ${money(Cart.FREE_SHIP_THRESHOLD)}</li><li>Standard delivery: 2–4 business days (${money((window.PEO_SETTINGS && window.PEO_SETTINGS.shipping.flatShipRate) || 5000)})</li><li>Every order arrives in recyclable, gift-ready packaging</li></ul></div></div>
-          </div>
-          <div class="accordion-item">
-            <button class="accordion-head">Returns & Authenticity <span class="a-icon">+</span></button>
-            <div class="accordion-body"><div class="accordion-body-inner"><ul><li>2-day return window — unworn, with tags attached</li><li>Refunds processed within 36 hours of receipt</li><li>All designer pieces are authenticated by our in-house team</li></ul></div></div>
-          </div>
-        </div>
-      </div>
-    </div>`;
-
-    // The gallery/info block above is injected after the page has
-    // already loaded, so the scroll-reveal observer (which only scans
-    // for .reveal elements once, on DOMContentLoaded) never saw it and
-    // it would otherwise stay invisible (opacity: 0) forever. Re-run it
-    // now so this freshly-inserted content gets picked up immediately.
-    if (window.PEAnim && typeof window.PEAnim.refreshReveals === "function")
-      window.PEAnim.refreshReveals();
-
-    // gallery switching
-    $$(".gallery-thumb").forEach((t) => {
-      t.addEventListener("click", () => {
-        $$(".gallery-thumb").forEach((x) => x.classList.remove("active"));
-        t.classList.add("active");
-        const main = $("#galleryMainImg");
-        if (main) main.src = t.dataset.img;
-      });
-    });
-
-    // gallery zoom on hover
-    const main = $("#galleryMainImg");
-    if (main && !window.matchMedia("(pointer: coarse)").matches) {
-      const wrap = $(".gallery-main");
-      wrap.addEventListener("mousemove", (e) => {
-        const r = wrap.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width) * 100;
-        const y = ((e.clientY - r.top) / r.height) * 100;
-        main.style.transformOrigin = x + "% " + y + "%";
-        main.style.transform = "scale(1.6)";
-      });
-      wrap.addEventListener("mouseleave", () => {
-        main.style.transform = "scale(1)";
-      });
-    }
-
-    // qty controls
-    const qtyVal = $("#qtyVal");
-    if (qtyVal) {
-      let q = 1;
-      const update = () => {
-        qtyVal.textContent = q;
-      };
-      $("#qtyMinus").addEventListener("click", () => {
-        if (q > 1) {
-          q--;
-          update();
-        }
-      });
-      $("#qtyPlus").addEventListener("click", () => {
-        if (q < 9) {
-          q++;
-          update();
-        }
-      });
-      // patch Cart.add for this page to respect qty
-      const btn = $(".btn-add");
-      if (btn) {
-        btn.addEventListener("click", () => {
-          const sel = $(".size-option.selected");
-          if (!sel) {
-            const err = $("#sizeError");
-            if (err) err.classList.add("show");
-            return;
-          }
-          Cart.add(p.id, sel.dataset.size, q);
-        });
-      }
-    }
-
-    // accordions
-    $$(".accordion-head").forEach((head) => {
-      head.addEventListener("click", () => {
-        const item = head.parentElement;
-        const body = $(".accordion-body", item);
-        const open = item.classList.contains("open");
-        // close others
-        $$(".accordion-item.open").forEach((o) => {
-          o.classList.remove("open");
-          $(".accordion-body", o).style.maxHeight = "0px";
-        });
-        if (!open) {
-          item.classList.add("open");
-          body.style.maxHeight = body.scrollHeight + "px";
-        }
-      });
-    });
-
-    // related products
-    const related = $("#relatedGrid");
-    if (related) {
-      const rel = getRelatedProducts(p, 4);
-      if (rel.length) {
-        related.innerHTML = rel
-          .map((r, i) => renderProductCard(r, { delay: i + 1 }))
-          .join("");
-        if (window.PEAnim && typeof window.PEAnim.refreshReveals === "function")
-          window.PEAnim.refreshReveals();
-      } else {
-        related.innerHTML =
-          '<p style="grid-column:1/-1;text-align:center;color:var(--ink-500);">More treasures coming soon 💗</p>';
-      }
-    }
-  }
-
-  render();
-  // Re-render when backend products arrive (api-bootstrap) or when the
-  // admin-configured shipping settings resolve (settings.js) — the
-  // Shipping & Delivery accordion shows the free-shipping threshold
-  window.addEventListener("peo:products", render);
-  document.addEventListener("peo:settings-ready", render);
-})();
-
-/* ── Featured products on home page ───────────────────────────── */
-(function initFeatured() {
-  const grid = $("#featuredGrid");
-  if (!grid) return;
-  function render() {
-    const feats = getFeaturedProducts(8);
-    grid.innerHTML = feats
-      .map((p, i) => renderProductCard(p, { delay: (i % 4) + 1 }))
-      .join("");
-    if (window.PEAnim && typeof window.PEAnim.refreshReveals === "function")
-      window.PEAnim.refreshReveals();
-  }
-  render();
-  // Re-render when backend products arrive (api-bootstrap)
-  window.addEventListener("peo:products", render);
-})();
-
-/* ── Accordions (generic, e.g. FAQ) ────────────────────── */
-(function initGenericAccordions() {
-  $$(".accordion-head").forEach((head) => {
-    // only bind if not already bound (product page binds its own)
-    if (head.dataset.bound) return;
-    head.dataset.bound = "1";
-    head.addEventListener("click", () => {
-      const item = head.parentElement;
-      const body = $(".accordion-body", item);
-      const open = item.classList.contains("open");
-      $$(".accordion-item.open").forEach((o) => {
-        if (o !== item) {
-          o.classList.remove("open");
-          const ob = $(".accordion-body", o);
-          if (ob) ob.style.maxHeight = "0px";
-        }
-      });
-      if (!open) {
-        item.classList.add("open");
-        if (body) body.style.maxHeight = body.scrollHeight + "px";
-      } else {
-        item.classList.remove("open");
-        if (body) body.style.maxHeight = "0px";
-      }
-    });
+/* ── Accordions ────────────────────────────────────────── */
+(function () {
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-accordion]");
+    if (!btn) return;
+    const id = btn.dataset.accordion;
+    const panel = document.getElementById(id);
+    if (!panel) return;
+    btn.classList.toggle("active");
+    panel.classList.toggle("open");
   });
 })();
 
-/* ── Forms ─────────────────────────────────────────────── */
-(function initForms() {
-  // newsletter (home)
-  const nlForm = $("#newsletterForm");
-  if (nlForm) {
-    nlForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const status = $("#newsletterStatus");
-      if (status)
-        status.textContent =
-          "Welcome to the club! Check your inbox for 10% off 💗";
-      nlForm.reset();
-    });
-  }
-  // footer mini form
-  const footForm = $("#footerNewsForm");
-  if (footForm) {
-    footForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const input = $("input", footForm);
-      if (input) {
-        input.value = "";
-        input.placeholder = "Subscribed ✓";
-      }
-    });
-  }
-  // contact form
-  const cForm = $("#contactForm");
-  if (cForm) {
-    cForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const status = $("#contactFormStatus");
-      const name = $("#cfName");
-      if (status) {
-        status.className = "form-status ok";
-        status.textContent =
-          "Thank you" +
-          (name && name.value ? ", " + name.value.split(" ")[0] : "") +
-          "! Your message is on its way — we reply within 24h 💌";
-      }
-      cForm.reset();
-    });
-  }
-})();
-
-/* ── Footer year ───────────────────────────────────────── */
-(function initYear() {
-  const y = $("#year");
-  if (y) y.textContent = new Date().getFullYear();
-})();
