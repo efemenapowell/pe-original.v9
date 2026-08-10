@@ -604,9 +604,10 @@ function renderProductCard(p, opts = {}) {
             ? state.sizes
             : state.cats;
       cb.checked ? set.add(value) : set.delete(value);
-      applyFilters();
-    });
-  });
+    applyFilters();
+document.addEventListener("peo:products", applyFilters);
+})();
+  
 
   // price range
   const range = $("#priceRange");
