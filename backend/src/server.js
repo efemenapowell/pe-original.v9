@@ -80,6 +80,7 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 // ---- Static files ----
 // Uploaded images: /uploads/...
 app.use('/uploads', express.static(config.uploadDir, { maxAge: '7d', immutable: true }));
+app.use('/api/images', require('./routes/image.routes'));
 
 // Frontend (built site): / → frontend/ folder
 const frontendDir = path.join(__dirname, '../../frontend');

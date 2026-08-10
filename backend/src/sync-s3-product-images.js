@@ -76,7 +76,7 @@ async function main() {
   // Simple strategy: assign bucket images to products in order
   // (in production, you'd match by filename/ID)
   let updated = 0;
-  const baseUrl = `${process.env.BUCKET_ENDPOINT}/${process.env.BUCKET_NAME}`;
+const baseUrl = `${process.env.APP_BASE_URL || 'https://pe-originals.store'}/api/images`;
 
   for (let i = 0; i < products.length && i < bucketFiles.length; i++) {
     const product = products[i];
