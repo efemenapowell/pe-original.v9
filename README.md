@@ -210,7 +210,7 @@ special effort, and to scale linearly when needed:
 2. **Horizontal scaling**: the API is stateless (JWT auth) — run N instances behind a load balancer (`npm start` in each). Postgres stays the single source of truth.
 3. **Managed Postgres**: move to RDS/Neon/Supabase with connection pooling (PgBouncer) — set `DATABASE_URL` to the pooled endpoint.
 4. **Managed Redis** (Upstash/ElastiCache) — set `REDIS_URL`; the app auto-detects it.
-5. **Media CDN**: upload product images to S3/Cloudinary instead of local `/uploads` (the `image`/`gallery` fields are just strings — swap the multer destination or add an S3 hook in `middleware/upload.js`).
+5. **Media CDN**: ✅ done — `middleware/uploadS3.js` uploads admin images straight to the Railway bucket (S3-compatible) and stores the full public URL in the `image`/`gallery` fields. The old local-disk `middleware/upload.js` is unused/dead code and can be deleted. If any product/category/content record still has an old `/uploads/...` path (from before this migration), run `node src/migrate-images-to-s3.js` (see that file's header for details) — those old files are unrecoverable from local disk since Railway's filesystem is ephemeral, so it audits + best-effort matches against what's currently in the bucket, and flags anything that needs a manual re-upload via `/admin`.
 6. **Queue order emails** (BullMQ/Resend) so SMTP latency never blocks checkout — emails are already fire-and-forget.
 7. **Database maintenance (~once a year)**: run `VACUUM ANALYZE` (or rely on autovacuum) and `prisma migrate deploy` after upgrading deps. With the above architecture, no schema work is expected more often.
 
