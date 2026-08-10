@@ -490,6 +490,19 @@ function renderProductCard(p, opts = {}) {
   const grid = $("#shopGrid");
   if (!grid) return;
 
+  // Validate product ID from URL (must be UUID format)
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlId = urlParams.get("id");
+  if (
+    urlId &&
+    !/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(
+      urlId,
+    )
+  ) {
+    console.warn("Invalid product ID format:", urlId);
+    // Product.html will render a 404/invalid message (see product.html render logic)
+  }
+
   const state = {
     cats: new Set(),
     sizes: new Set(),
@@ -574,7 +587,11 @@ function renderProductCard(p, opts = {}) {
         list.sort((a, b) => b.id - a.id);
         break;
       default:
-        list.sort((a, b) => b.featured - a.featured || a.id - b.id);
+        list.sort((a, b) => {
+          // Featured first, then by ID (insertion order)
+          if (a.featured !== b.featured) return b.featured ? 1 : -1;
+          return a.id.localeCompare(b.id);
+        });
     }
 
     grid.innerHTML = list
