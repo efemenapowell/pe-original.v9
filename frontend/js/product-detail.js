@@ -9,19 +9,27 @@
 (function () {
   "use strict";
   const root = $("#productRoot");
+  console.log("[product-detail] script loaded. #productRoot found:", !!root);
   if (!root) return; // not on product.html
 
   const relatedGrid = $("#relatedGrid");
   const crumb = $("#pdBreadcrumbName");
 
-  function render() {
+  function render(reason) {
     const id = new URLSearchParams(window.location.search).get("id");
+    const productsLen = (window.PRODUCTS && window.PRODUCTS.length) || 0;
+    console.log(
+      "[product-detail] render() called. reason=" + reason,
+      "| url id=" + id,
+      "| PRODUCTS.length=" + productsLen
+    );
+
     const p = getProductById(id);
+    console.log("[product-detail] getProductById result:", p);
 
     if (!p) {
-      // An empty PRODUCTS array just means we're still waiting on the
-      // API response — only show "not found" once real data has loaded.
-      if (window.PRODUCTS && window.PRODUCTS.length) {
+      if (productsLen) {
+        console.log("[product-detail] no matching product — showing not-found state.");
         root.innerHTML = `
           <div style="text-align:center; padding:60px 20px;">
             <h2>Product not found</h2>
@@ -29,9 +37,13 @@
             <a href="shop.html" class="btn">Back to Shop</a>
           </div>`;
         if (crumb) crumb.textContent = "Not found";
+      } else {
+        console.log("[product-detail] PRODUCTS not loaded yet — waiting for peo:products event.");
       }
       return;
     }
+
+    console.log("[product-detail] rendering product:", p.name, p.id);
 
     const discount =
       p.originalPrice > p.price
@@ -102,6 +114,8 @@
         </div>
       </div>`;
 
+    console.log("[product-detail] innerHTML set. root now has", root.children.length, "child element(s).");
+
     // Gallery thumb swap
     $$(".gallery-thumb", root).forEach((thumb) => {
       thumb.addEventListener("click", () => {
@@ -116,6 +130,7 @@
     if (relatedGrid) {
       const related =
         typeof getRelatedProducts === "function" ? getRelatedProducts(p, 3) : [];
+      console.log("[product-detail] related products found:", related.length);
       relatedGrid.innerHTML = related
         .map((rp, i) => renderProductCard(rp, { delay: (i % 4) + 1 }))
         .join("");
@@ -126,6 +141,6 @@
     }
   }
 
-  render();
-  document.addEventListener("peo:products", render);
+  render("initial");
+  document.addEventListener("peo:products", () => render("peo:products event"));
 })();
