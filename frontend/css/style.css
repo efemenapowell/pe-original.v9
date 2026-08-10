@@ -829,6 +829,7 @@ select {
   aspect-ratio: 3/4;
   overflow: hidden;
   border-radius: var(--radius);
+  max-width: 100%;
 }
 /* Product image — swap picsum URL for your real photo below */
 .product-media img {
