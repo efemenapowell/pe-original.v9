@@ -89,7 +89,10 @@ async function listAllBucketKeys() {
 }
 
 function buildUrl(key) {
-  return `${process.env.BUCKET_ENDPOINT}/${process.env.BUCKET_NAME}/${key}`;
+  // Same fix as middleware/uploadS3.js: the bucket is private, so the
+  // public URL must go through our /api/images/<key> proxy route, not
+  // point at the bucket directly.
+  return `/api/images/${key}`;
 }
 
 /** Given a record name + a broken value, find S3 keys whose filename portion

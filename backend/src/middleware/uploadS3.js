@@ -53,8 +53,17 @@ async function uploadToS3(files) {
 
       await s3Client.send(command);
 
-      // Build public URL for the uploaded file
-      const url = `${process.env.BUCKET_ENDPOINT}/${process.env.BUCKET_NAME}/${key}`;
+      // Build the public-facing URL. The bucket itself is PRIVATE (see
+      // routes/image.routes.js), so we must NOT point at the raw bucket
+      // endpoint directly — the browser would get a 403 trying to load
+      // it. Instead, point at our own /api/images/<key> proxy route,
+      // which streams the object through our server. (This used to
+      // build `${BUCKET_ENDPOINT}/${BUCKET_NAME}/${key}` — a direct,
+      // private-bucket URL that always 403'd in the browser, which is
+      // why every image uploaded through the admin panel showed up
+      // blank on the storefront.) A relative path also avoids needing
+      // to know/configure the public base URL here.
+      const url = `/api/images/${key}`;
       uploadedFiles.push({
         filename: key,
         url,
