@@ -197,12 +197,14 @@
           try {
             const result = await applyCoupon(code, state.totals.subtotal);
             state.coupon = { code: result.code, discount: result.discount };
-            msg.textContent = `🎉 ${result.code} applied — you save ${money(result.discount)}`;
+            // Only re-render on success — a full re-render rebuilds
+            // #coCouponMsg from state.coupon, which would silently wipe
+            // out an error message set in the catch branch below before
+            // the shopper ever saw it.
+            render();
           } catch (ex) {
             msg.textContent = ex.message || "Invalid coupon code.";
-          } finally {
             couponBtn.disabled = false;
-            render();
           }
         });
       }

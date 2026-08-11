@@ -449,8 +449,7 @@ document.addEventListener("peo:settings-ready", () => {
 })();
 
 /* ── Product card renderer (shared) ─────────────────────── */
-function renderProductCard(p, opts = {}) {
-  const sold = p.badge === "sold" || p.sizes.length === 0;
+function renderProductCard(p, opts = {}) {  const sold = p.badge === "sold" || p.sizes.length === 0;
   const discount =
     p.originalPrice > p.price
       ? Math.round((1 - p.price / p.originalPrice) * 100)
@@ -484,6 +483,29 @@ function renderProductCard(p, opts = {}) {
     </div>
   </article>`;
 }
+
+/* ── Home page: Featured Pieces grid ───────────────────────
+   index.html ships with #featuredGrid and the comment "Products
+   injected by js/main.js from js/products.js" — but nothing ever
+   rendered into it, so the homepage's Featured Pieces section was
+   always empty. ────────────────────────────────────────────── */
+(function initFeaturedGrid() {
+  const grid = $("#featuredGrid");
+  if (!grid) return; // not on index.html
+
+  function render() {
+    const items = getFeaturedProducts(8);
+    grid.innerHTML = items.length
+      ? items.map((p, i) => renderProductCard(p, { delay: (i % 4) + 1 })).join("")
+      : "";
+    if (window.PEAnim && typeof window.PEAnim.refreshReveals === "function") {
+      window.PEAnim.refreshReveals();
+    }
+  }
+
+  render();
+  document.addEventListener("peo:products", render);
+})();
 
 /* ── Shop page: filters, sort, search ──────────────────── */
 (function initShop() {

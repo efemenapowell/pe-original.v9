@@ -92,8 +92,23 @@ const checkoutSchema = z.object({
 async function buildOrder(user, body) {
   let lineItems;
 
-  if (user) {
-    // Server-side cart for authenticated users
+  // The storefront's cart lives entirely in the browser's localStorage
+  // (see frontend/js/main.js's Cart object) — nothing in the frontend
+  // ever calls POST /api/cart/items to populate the server-side
+  // Cart/CartItem tables. Because of that, ALWAYS prefer the items the
+  // client sent in the checkout payload. Only fall back to the
+  // server-side cart for a signed-in user when the client didn't send
+  // any items at all (kept for forward-compatibility with a future
+  // client that does use the server cart).
+  //
+  // Previously this branched purely on `user`: any signed-in shopper
+  // had their submitted items ignored in favour of the (always empty)
+  // server cart, so checkout unconditionally failed with "Your cart is
+  // empty" for every logged-in customer, regardless of what was in
+  // their bag.
+  if (Array.isArray(body.items) && body.items.length) {
+    lineItems = body.items;
+  } else if (user) {
     const cart = await prisma.cart.findUnique({
       where: { userId: user.id },
       include: { items: true },
@@ -103,7 +118,7 @@ async function buildOrder(user, body) {
     }
     lineItems = cart.items.map((i) => ({ productId: i.productId, size: i.size, qty: i.qty }));
   } else {
-    lineItems = body.items;
+    throw new ApiError(400, 'Your cart is empty');
   }
 
   // Resolve products & validate availability

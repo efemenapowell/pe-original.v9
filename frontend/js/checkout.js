@@ -213,12 +213,14 @@
             const result = await API.validateCoupon(code, subtotal);
             if (!result || !result.valid) throw new Error("This coupon cannot be applied.");
             renderStep._coupon = { code: result.code, discount: result.discount };
-            msg.textContent = `🎉 ${result.code} applied — you save ${money(result.discount)}`;
+            // Only re-render on success — a full re-render rebuilds #coError
+            // from scratch, which would silently wipe out an error message
+            // set in the catch branch below before the shopper ever saw it.
+            renderStep("shipping");
           } catch (ex) {
             msg.textContent = "";
             err.textContent = ex.message || "Invalid coupon code.";
-          } finally {
-            renderStep("shipping");
+            couponBtn.disabled = false;
           }
         });
       }

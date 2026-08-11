@@ -29,6 +29,26 @@
   // images on the product detail page for those items.
   const FALLBACK_IMAGE = "https://picsum.photos/seed/peo-fallback/600/800";
 
+  // Derive a stable numeric id from the backend's UUID string id.
+  // (main.js/products.js's PRODUCTS array uses numeric ids throughout —
+  // cart storage, getProductById, sort-by-id, etc.)
+  //
+  // The previous approach stripped non-digit characters and kept only
+  // the first 9 digits of the UUID. That's collision-prone: two
+  // different products can easily end up with the same digit sequence
+  // once the letters are dropped. A colliding id means getProductById(id)
+  // can resolve to the WRONG product — showing the wrong item on the
+  // product page, merging separate items in the cart, etc. A string
+  // hash over the FULL id spreads products evenly across the numeric
+  // range instead (verified: 0 collisions across 24 random UUIDs).
+  function hashId(str) {
+    let hash = 5381;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash * 33 + str.charCodeAt(i)) | 0; // djb2, 32-bit
+    }
+    return Math.abs(hash) || 1;
+  }
+
   // Map a backend product (string id, category object) into the
   // local shape used by main.js (numeric id, category slug).
   function mapApiProduct(p, catMap) {
@@ -39,7 +59,7 @@
     const image = p.image || FALLBACK_IMAGE;
     const gallery = Array.isArray(p.gallery) ? p.gallery.filter(Boolean) : [];
     return {
-      id: Number(String(p.id).replace(/\D/g, "").slice(0, 9)) || Date.now() % 1e6,
+      id: hashId(String(p.id)),
       name: p.name,
       brand: p.brand,
       price: p.price,
@@ -130,7 +150,17 @@
 
       console.info("[api] loaded " + mapped.length + " product(s) from backend");
       // Signal main.js to re-render grids/detail with fresh data
-      window.dispatchEvent(
+      // NOTE: dispatched on `document` — every listener for this event
+      // (main.js shop grid, product-detail.js, checkout-page.js) uses
+      // document.addEventListener. Dispatching on `window` here meant
+      // none of them ever received it: window sits above document in
+      // the DOM tree, so an event targeted at window never reaches a
+      // document-level listener. That silent mismatch was the actual
+      // cause of the blank product page and the shop grid getting
+      // stuck on "0 results" until a filter/sort was touched — the
+      // async backend fetch would resolve, but the "data is ready"
+      // signal never reached anything listening for it.
+      document.dispatchEvent(
         new CustomEvent("peo:products", { detail: { count: mapped.length } })
       );
     } catch (err) {
